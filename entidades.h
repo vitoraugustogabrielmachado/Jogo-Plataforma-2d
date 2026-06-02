@@ -1,0 +1,36 @@
+#ifndef ENTIDADES
+#define ENTIDADES
+
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_font.h>
+#include <allegro5/allegro_ttf.h>
+#include <allegro5/allegro_image.h>
+#include <allegro5/allegro_primitives.h>
+#include <stdio.h>
+#include <stdbool.h>
+
+struct hitbox{
+    int pontoX;
+    int pontoY;
+    int largura;
+    int altura;
+};
+
+struct personagem{
+    int vida;
+    int velocidade;
+    int posX;
+    int posY;
+    struct hitbox hitboxPersonagem;
+    //allegro bitmap no futuro
+    //nome?
+};
+
+void inicializarPersonagem(struct personagem *persona);
+void desenharPersonagem(struct personagem persona);
+void moverCima(struct personagem *persona);
+void moverBaixo(struct personagem *persona);
+void moverEsquerda(struct personagem *persona);
+void moverDireita(struct personagem *persona);
+
+#endif

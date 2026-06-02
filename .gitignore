@@ -1,0 +1,20 @@
+# Build artifacts
+*.o
+*.out
+*.exe
+programa
+
+# IDE / editor
+.vscode/
+*.swp
+*~
+
+# OS
+.DS_Store
+
+# Binary assets (optional)
+*.bmp
+*.png
+*.jpg
+*.jpeg
+*.ttf
