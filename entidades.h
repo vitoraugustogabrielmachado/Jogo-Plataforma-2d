@@ -22,6 +22,7 @@ struct personagem{
     int posX;
     int posY;
     struct hitbox hitboxPersonagem;
+    float velocidadeY;
     //allegro bitmap no futuro
     //nome?
 };
@@ -43,5 +44,8 @@ void moverCima(struct personagem *persona);
 void moverBaixo(struct personagem *persona);
 void moverEsquerda(struct personagem *persona);
 void moverDireita(struct personagem *persona);
+bool verificarHitbox(struct personagem *persona, int mapa[15][20]);
+void inicializarMapa(int mapa[15][20]);
+void desenharMapa(int mapa[15][20]);
 
 #endif

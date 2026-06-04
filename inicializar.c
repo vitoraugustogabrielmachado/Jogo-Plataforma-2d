@@ -70,7 +70,6 @@ bool inicializar(ALLEGRO_DISPLAY **janela, ALLEGRO_EVENT_QUEUE **fila_eventos, A
   al_register_event_source(*fila_eventos, al_get_keyboard_event_source());
   al_register_event_source(*fila_eventos, al_get_display_event_source(*janela));
 
-  /* create timer here after allegro init */
   *timer = al_create_timer(1.0 / FPS);
   if (!*timer){
     fprintf(stderr, "Falha ao criar timer.\n");
