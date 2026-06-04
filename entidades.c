@@ -20,7 +20,7 @@ void desenharPersonagem(struct personagem persona){
 }
 
 void moverCima(struct personagem *persona){
-    persona->posY -= persona->velocidade;
+    persona->posY -= 4 * persona->velocidade;
 }
 
 void moverBaixo(struct personagem *persona){

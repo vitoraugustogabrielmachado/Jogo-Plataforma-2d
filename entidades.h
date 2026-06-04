@@ -26,6 +26,17 @@ struct personagem{
     //nome?
 };
 
+struct tile{
+    int hitboxINTEIRA;
+    int hitboxEMCIMA;
+    int spriteID;
+};
+
+static const struct tile TILE[] = {
+    [0] = {0, 0, 0},
+    [1] = {1, 0, 1},
+};
+
 void inicializarPersonagem(struct personagem *persona);
 void desenharPersonagem(struct personagem persona);
 void moverCima(struct personagem *persona);
