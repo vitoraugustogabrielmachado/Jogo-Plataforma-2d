@@ -9,6 +9,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#define LINHAS 15
+#define COLUNAS 25
+
 struct hitbox{
     int pontoX;
     int pontoY;
@@ -42,10 +45,10 @@ void inicializarPersonagem(struct personagem *persona);
 void desenharPersonagem(struct personagem persona);
 void moverCima(struct personagem *persona);
 void moverBaixo(struct personagem *persona);
-void moverEsquerda(struct personagem *persona);
-void moverDireita(struct personagem *persona);
-bool verificarHitbox(struct personagem *persona, int mapa[15][20]);
-void inicializarMapa(int mapa[15][20]);
-void desenharMapa(int mapa[15][20]);
+void moverEsquerda(struct personagem *persona, int *cameraX);
+void moverDireita(struct personagem *persona, int *cameraX);
+bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
+void inicializarMapa(int mapa[LINHAS][COLUNAS]);
+void desenharMapa(int mapa[LINHAS][COLUNAS], int *cameraX);
 
 #endif

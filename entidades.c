@@ -28,17 +28,22 @@ void moverBaixo(struct personagem *persona){
     persona->posY += persona->velocidade;
 }
 
-void moverEsquerda(struct personagem *persona){
+void moverEsquerda(struct personagem *persona, int *cameraX){
     persona->posX -= persona->velocidade;
-    if(persona->posX < 0)
+    *cameraX -= persona->velocidade;
+    if(persona->posX < 0){
         persona->posX = 0;
+        *cameraX = 0;
+    }
 }
 
-void moverDireita(struct personagem *persona){
+void moverDireita(struct personagem *persona, int *cameraX){
     persona->posX += persona->velocidade;
+    *cameraX += persona->velocidade;
+    
 }
 
-bool verificarHitbox(struct personagem *persona, int mapa[15][20]){
+bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS]){
     int iniciox = (persona->posX) / 32;
     int fimx = (persona->posX + 20) / 32;
     int inicioy = (persona->posY) / 32;
@@ -46,12 +51,12 @@ bool verificarHitbox(struct personagem *persona, int mapa[15][20]){
 
     if(iniciox < 0)  
         iniciox = 0;
-    if(fimx >= 20)  
-        fimx = 19;
+    if(fimx >= COLUNAS)  
+        fimx = COLUNAS - 1;
     if(inicioy < 0)  
         inicioy = 0;
-    if(fimy >= 15)   
-        fimy = 14;
+    if(fimy >= LINHAS)   
+        fimy = LINHAS - 1;
 
     for(int col = iniciox; col <= fimx; col++){
         for(int lin = inicioy; lin <= fimy; lin++){
@@ -76,35 +81,36 @@ bool verificarHitbox(struct personagem *persona, int mapa[15][20]){
     return(false);
 }
 
-void inicializarMapa(int mapa[15][20]) {
-    int temp[15][20] = {
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+void inicializarMapa(int mapa[LINHAS][COLUNAS]) {
+    int temp[LINHAS][COLUNAS] = {
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1},
+        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     };
-    for (int lin = 0; lin < 15; lin++)
-        for (int col = 0; col < 20; col++)
+    for (int lin = 0; lin < LINHAS; lin++)
+        for (int col = 0; col < COLUNAS; col++)
             mapa[lin][col] = temp[lin][col];
 }
 
-void desenharMapa(int mapa[15][20]){
-    for(int lin = 0; lin < 15; lin++){
-        for(int col = 0; col < 20; col++){
+void desenharMapa(int mapa[LINHAS][COLUNAS], int *cameraX){
+    for(int lin = 0; lin < LINHAS; lin++){
+        for(int col = 0; col < COLUNAS; col++){
             int tipo = mapa[lin][col];
-            if(tipo != 0)
-                al_draw_filled_rectangle(col * 32, lin * 32, col * 32 + 32, lin * 32 + 32, al_map_rgb(255, 0, 255));
+            int telaX = (col * 32) - *cameraX;
+            if(tipo != 0 && telaX > -32 && telaX < 680)
+                al_draw_filled_rectangle(telaX, lin * 32, telaX + 32, lin * 32 + 32, al_map_rgb(255, 0, 255));
         }
     }
 }

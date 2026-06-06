@@ -8,28 +8,12 @@
 #include "inicializar.h"
 #include "entidades.h"
 
-
-int main(){
-    ALLEGRO_DISPLAY *janela = NULL;
-    ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
-    /*ALLEGRO_BITMAP *fundo = NULL;
-    ALLEGRO_BITMAP *personagem = NULL;*/
-    ALLEGRO_FONT *fonte = NULL;
-    ALLEGRO_TIMER *timer = NULL;//20 15
-    int mapa[15][20];
-    inicializarMapa(mapa);
-    
+void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_QUEUE *fila_eventos){
     bool sair = false, redraw = false;
     bool keys[4] = {false, false, false, false};
-    
-    if(!inicializar(&janela, &fila_eventos, &fonte, &timer))
-        return (0);
-    al_start_timer(timer);
 
-    struct personagem persona;
-    inicializarPersonagem(&persona);
-    
-    //inicializar personagem
+    int cameraX = 0;
+    printf("%d\n", cameraX);
 
     while(!sair){
         ALLEGRO_EVENT ev;
@@ -38,24 +22,24 @@ int main(){
         if(ev.type == ALLEGRO_EVENT_TIMER){
             redraw = true;
             
-            persona.velocidadeY += 0.4f;
-            persona.posY += persona.velocidadeY;
+            persona->velocidadeY += 0.4f;
+            persona->posY += persona->velocidadeY;
 
             if(keys[2])
-                moverEsquerda(&persona);
+                moverEsquerda(persona, &cameraX);
                 //mover personagem para esquerda
             if(keys[3])
-                moverDireita(&persona);
+                moverDireita(persona, &cameraX);
                 //mover personagem para direita
-            verificarHitbox(&persona, mapa);
+            verificarHitbox(persona, mapa);
         }
         else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
             sair = true;
         else if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
             switch (ev.keyboard.keycode){
                 case ALLEGRO_KEY_UP:
-                    if(persona.posY >= 429)
-                        persona.velocidadeY = -8.0f;
+                    if(persona->posY >= 429)
+                        persona->velocidadeY = -8.0f;
                     break;
                 
                 case ALLEGRO_KEY_DOWN:
@@ -94,12 +78,36 @@ int main(){
             }
         if(redraw && al_event_queue_is_empty(fila_eventos)){
             redraw = false;                         
-            al_clear_to_color(al_map_rgb(0, 0, 0)); 
-            desenharMapa(mapa);                      
-            desenharPersonagem(persona);             
+            al_clear_to_color(al_map_rgb(255, 255, 255)); 
+            desenharMapa(mapa, &cameraX);                      
+            desenharPersonagem(*persona);             
             al_flip_display();                       
         }
     }
+}
+
+int main(){
+    ALLEGRO_DISPLAY *janela = NULL;
+    ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
+    /*ALLEGRO_BITMAP *fundo = NULL;
+    ALLEGRO_BITMAP *personagem = NULL;*/
+    ALLEGRO_FONT *fonte = NULL;
+    ALLEGRO_TIMER *timer = NULL;//20 15
+
+    int mapa[LINHAS][COLUNAS];
+    inicializarMapa(mapa);
+    
+    if(!inicializar(&janela, &fila_eventos, &fonte, &timer))
+        return (0);
+
+    al_start_timer(timer);
+
+    struct personagem persona;
+    inicializarPersonagem(&persona);
+    
+    //inicializar personagem
+    loop(mapa, &persona, fila_eventos);
+
     al_destroy_display(janela);
     al_destroy_event_queue(fila_eventos);
  
