@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include "inicializar.h"
 
-bool inicializar(ALLEGRO_DISPLAY **janela, ALLEGRO_EVENT_QUEUE **fila_eventos, ALLEGRO_FONT **fonte, ALLEGRO_TIMER **timer){
+bool inicializar(ALLEGRO_DISPLAY **janela, ALLEGRO_EVENT_QUEUE **fila_eventos, ALLEGRO_FONT **fonte, ALLEGRO_TIMER **timer, ALLEGRO_BITMAP *fundo){
   if (!al_init()){
     fprintf(stderr, "Falha ao inicializar a Allegro.\n");
     return false;
@@ -52,14 +52,14 @@ bool inicializar(ALLEGRO_DISPLAY **janela, ALLEGRO_EVENT_QUEUE **fila_eventos, A
   }
  
   al_init_primitives_addon();
-  /*fundo = al_load_bitmap("bg.jpg");
+  fundo = al_load_bitmap("fundo.png");
   if (!fundo){
     fprintf(stderr, "Falha ao carregar imagem de fundo.\n");
-    al_destroy_display(janela);
-    al_destroy_event_queue(fila_eventos);
+    al_destroy_display(*janela);
+    al_destroy_event_queue(*fila_eventos);
     return false;
   }
-  personagem = al_load_bitmap("images.jpg");
+  /*personagem = al_load_bitmap("images.jpg");
   if (!personagem){
     fprintf(stderr, "Falha ao carregar imagem.\n");
     al_destroy_display(janela);

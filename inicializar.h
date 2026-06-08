@@ -10,6 +10,6 @@
 #define ALTURA_TELA 480
 #define FPS 60
 
-bool inicializar(ALLEGRO_DISPLAY **janela, ALLEGRO_EVENT_QUEUE **fila_eventos, ALLEGRO_FONT **fonte, ALLEGRO_TIMER **timer);
+bool inicializar(ALLEGRO_DISPLAY **janela, ALLEGRO_EVENT_QUEUE **fila_eventos, ALLEGRO_FONT **fonte, ALLEGRO_TIMER **timer, ALLEGRO_BITMAP *fundo);
 
 #endif

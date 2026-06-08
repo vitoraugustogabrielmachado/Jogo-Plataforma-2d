@@ -8,7 +8,7 @@
 #include "inicializar.h"
 #include "entidades.h"
 
-void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_QUEUE *fila_eventos){
+void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_BITMAP *fundo){
     bool sair = false, redraw = false;
     bool keys[4] = {false, false, false, false};
     bool noChao = false;
@@ -89,6 +89,7 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
         if(redraw && al_event_queue_is_empty(fila_eventos)){
             redraw = false;                         
             al_clear_to_color(al_map_rgb(255, 255, 255)); 
+            //al_draw_bitmap(fundo, 0, 0, 0);
             desenharMapa(mapa, &cameraX);                      
             desenharPersonagem(*persona, cameraX);             
             al_flip_display();                       
@@ -99,15 +100,15 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
 int main(){
     ALLEGRO_DISPLAY *janela = NULL;
     ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
-    /*ALLEGRO_BITMAP *fundo = NULL;
-    ALLEGRO_BITMAP *personagem = NULL;*/
+    ALLEGRO_BITMAP *fundo = NULL;
+    //ALLEGRO_BITMAP *personagem = NULL;*/
     ALLEGRO_FONT *fonte = NULL;
     ALLEGRO_TIMER *timer = NULL;//20 15
 
     int mapa[LINHAS][COLUNAS];
     inicializarMapa(mapa);
     
-    if(!inicializar(&janela, &fila_eventos, &fonte, &timer))
+    if(!inicializar(&janela, &fila_eventos, &fonte, &timer, fundo))
         return (0);
 
     al_start_timer(timer);
@@ -116,7 +117,7 @@ int main(){
     inicializarPersonagem(&persona);
     
     //inicializar personagem
-    loop(mapa, &persona, fila_eventos);
+    loop(mapa, &persona, fila_eventos, fundo);
 
     al_destroy_display(janela);
     al_destroy_event_queue(fila_eventos);
