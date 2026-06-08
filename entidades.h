@@ -38,16 +38,17 @@ struct tile{
 
 static const struct tile TILE[] = {
     [0] = {0, 0, 0},
-    [1] = {1, 0, 1},
+    [1] = {0, 1, 1},
+    [2] = {1, 0, 1},
 };
 
 void inicializarPersonagem(struct personagem *persona);
-void desenharPersonagem(struct personagem persona);
+void desenharPersonagem(struct personagem persona, int cameraX);
 void moverCima(struct personagem *persona);
 void moverBaixo(struct personagem *persona);
 void moverEsquerda(struct personagem *persona, int *cameraX);
 void moverDireita(struct personagem *persona, int *cameraX);
-bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
+bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS], int cameraX);
 void inicializarMapa(int mapa[LINHAS][COLUNAS]);
 void desenharMapa(int mapa[LINHAS][COLUNAS], int *cameraX);
 

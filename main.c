@@ -12,12 +12,14 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
     bool sair = false, redraw = false;
     bool keys[4] = {false, false, false, false};
 
-    int cameraX = 0;
-    printf("%d\n", cameraX);
+    int cameraX = persona->posX - LARGURA_TELA/2;
+
+    //printf("%d\n", cameraX);
 
     while(!sair){
         ALLEGRO_EVENT ev;
         al_wait_for_event(fila_eventos, &ev);
+        //printf("%d\n", cameraX);
         //printf("%d\n", persona.posY);
         if(ev.type == ALLEGRO_EVENT_TIMER){
             redraw = true;
@@ -25,13 +27,17 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
             persona->velocidadeY += 0.4f;
             persona->posY += persona->velocidadeY;
 
+
             if(keys[2])
                 moverEsquerda(persona, &cameraX);
                 //mover personagem para esquerda
             if(keys[3])
                 moverDireita(persona, &cameraX);
                 //mover personagem para direita
-            verificarHitbox(persona, mapa);
+            verificarHitbox(persona, mapa, cameraX);
+            cameraX = persona->posX - LARGURA_TELA/2;
+            if(cameraX <= 0)
+                cameraX = 0;
         }
         else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
             sair = true;
@@ -80,7 +86,7 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
             redraw = false;                         
             al_clear_to_color(al_map_rgb(255, 255, 255)); 
             desenharMapa(mapa, &cameraX);                      
-            desenharPersonagem(*persona);             
+            desenharPersonagem(*persona, cameraX);             
             al_flip_display();                       
         }
     }
@@ -96,6 +102,7 @@ int main(){
 
     int mapa[LINHAS][COLUNAS];
     inicializarMapa(mapa);
+    
     
     if(!inicializar(&janela, &fila_eventos, &fonte, &timer))
         return (0);

@@ -11,13 +11,13 @@
 void inicializarPersonagem(struct personagem *persona){
     persona->velocidade = 5;
     persona->vida = 3;
-    persona->posX = 20; //ver isso
+    persona->posX = 0; //ver isso
     persona->posY = ALTURA_TELA - 100;
     persona->velocidadeY = 0;
 }
 
-void desenharPersonagem(struct personagem persona){
-    al_draw_filled_rectangle(persona.posX, persona.posY, persona.posX + 20, persona.posY + 20, al_map_rgb(255, 0, 255));
+void desenharPersonagem(struct personagem persona, int cameraX){
+    al_draw_filled_rectangle(persona.posX - cameraX , persona.posY, persona.posX + 20 - cameraX, persona.posY + 20, al_map_rgb(255, 0, 255));
 }
 
 void moverCima(struct personagem *persona){
@@ -30,20 +30,16 @@ void moverBaixo(struct personagem *persona){
 
 void moverEsquerda(struct personagem *persona, int *cameraX){
     persona->posX -= persona->velocidade;
-    *cameraX -= persona->velocidade;
-    if(persona->posX < 0){
+    if(persona->posX < 0)
         persona->posX = 0;
-        *cameraX = 0;
-    }
 }
 
 void moverDireita(struct personagem *persona, int *cameraX){
     persona->posX += persona->velocidade;
-    *cameraX += persona->velocidade;
     
 }
 
-bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS]){
+bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS], int cameraX){
     int iniciox = (persona->posX) / 32;
     int fimx = (persona->posX + 20) / 32;
     int inicioy = (persona->posY) / 32;
@@ -65,13 +61,15 @@ bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS]){
             if(temp.hitboxEMCIMA || temp.hitboxINTEIRA){
                 int c = col * 32;
                 int l = lin * 32;
-                if((persona->posX < c && persona->posX + 20 > c) || (persona->posY < l && persona->posY + 20 > l)){
-                    if(persona->posY < l && persona->posY + 20 > l){
+                if(persona->posX < c + 32 && persona->posX + 20 > c && persona->posY < l + 32 && persona->posY + 20 > l){
+                    if(persona->posY < l && persona->posY + 20 > l){ // tem o caso de bater em cima "na cabeça do personagem"
                         persona->posY = l - 19;
                         persona->velocidadeY = 0;
                     }
-                    if(persona->posX < c && persona->posX + 20 > c)
+                    if(persona->posX < c  && persona->posX + 20 > c)
                         persona->posX = c - 19;
+                    if(persona->posX < c + 32 && persona->posX + 20 > c)
+                        persona->posX = persona->posX + 1;
                     return(true);
                 }
                     
@@ -83,20 +81,20 @@ bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS]){
 
 void inicializarMapa(int mapa[LINHAS][COLUNAS]) {
     int temp[LINHAS][COLUNAS] = {
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+        {0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,2},
         {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
     };
     for (int lin = 0; lin < LINHAS; lin++)
