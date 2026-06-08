@@ -48,8 +48,10 @@ void moverCima(struct personagem *persona);
 void moverBaixo(struct personagem *persona);
 void moverEsquerda(struct personagem *persona, int *cameraX);
 void moverDireita(struct personagem *persona, int *cameraX);
-bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS], int cameraX);
+bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 void inicializarMapa(int mapa[LINHAS][COLUNAS]);
 void desenharMapa(int mapa[LINHAS][COLUNAS], int *cameraX);
+void colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
+bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 
 #endif

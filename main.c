@@ -11,6 +11,7 @@
 void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_QUEUE *fila_eventos){
     bool sair = false, redraw = false;
     bool keys[4] = {false, false, false, false};
+    bool noChao = false;
 
     int cameraX = persona->posX - LARGURA_TELA/2;
 
@@ -23,18 +24,20 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
         //printf("%d\n", persona.posY);
         if(ev.type == ALLEGRO_EVENT_TIMER){
             redraw = true;
-            
-            persona->velocidadeY += 0.4f;
-            persona->posY += persona->velocidadeY;
-
-
             if(keys[2])
                 moverEsquerda(persona, &cameraX);
                 //mover personagem para esquerda
             if(keys[3])
                 moverDireita(persona, &cameraX);
                 //mover personagem para direita
-            verificarHitbox(persona, mapa, cameraX);
+            colisaoHorizontal(persona, mapa);
+
+            persona->velocidadeY += 0.4f;
+            persona->posY += persona->velocidadeY;
+            noChao = colisaoVertical(persona, mapa);
+            if(keys[0] && noChao)       
+                persona->velocidadeY = -8.0f;
+
             cameraX = persona->posX - LARGURA_TELA/2;
             if(cameraX <= 0)
                 cameraX = 0;
@@ -44,8 +47,7 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
         else if(ev.type == ALLEGRO_EVENT_KEY_DOWN)
             switch (ev.keyboard.keycode){
                 case ALLEGRO_KEY_UP:
-                    if(persona->posY >= 429)
-                        persona->velocidadeY = -8.0f;
+                    keys[0] = true;
                     break;
                 
                 case ALLEGRO_KEY_DOWN:
@@ -65,7 +67,9 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
             }
         else if(ev.type == ALLEGRO_EVENT_KEY_UP)
             switch(ev.keyboard.keycode){
-             
+                case ALLEGRO_KEY_UP:
+                    keys[0] = false;
+                    break;
                 
                 case ALLEGRO_KEY_DOWN:
                     keys[1] = false;
@@ -102,7 +106,6 @@ int main(){
 
     int mapa[LINHAS][COLUNAS];
     inicializarMapa(mapa);
-    
     
     if(!inicializar(&janela, &fila_eventos, &fonte, &timer))
         return (0);

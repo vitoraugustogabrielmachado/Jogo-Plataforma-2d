@@ -39,44 +39,89 @@ void moverDireita(struct personagem *persona, int *cameraX){
     
 }
 
-bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS], int cameraX){
-    int iniciox = (persona->posX) / 32;
-    int fimx = (persona->posX + 20) / 32;
-    int inicioy = (persona->posY) / 32;
-    int fimy = (persona->posY + 20) / 32;
+bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
+    int iniciox = persona->posX / 32;
+    int fimx    = (persona->posX + 19) / 32;
+    int inicioy = persona->posY / 32;
+    int fimy    = (persona->posY + 19) / 32;
 
-    if(iniciox < 0)  
+    if(iniciox < 0)       
         iniciox = 0;
-    if(fimx >= COLUNAS)  
+    if(fimx >= COLUNAS)   
         fimx = COLUNAS - 1;
-    if(inicioy < 0)  
+    if(inicioy < 0)       
         inicioy = 0;
-    if(fimy >= LINHAS)   
+    if(fimy >= LINHAS)    
         fimy = LINHAS - 1;
 
-    for(int col = iniciox; col <= fimx; col++){
-        for(int lin = inicioy; lin <= fimy; lin++){
+    bool noChao = false;
+
+    for(int lin = inicioy; lin <= fimy; lin++){
+        for(int col = iniciox; col <= fimx; col++){
             int tipo = mapa[lin][col];
             struct tile temp = TILE[tipo];
             if(temp.hitboxEMCIMA || temp.hitboxINTEIRA){
+
                 int c = col * 32;
                 int l = lin * 32;
-                if(persona->posX < c + 32 && persona->posX + 20 > c && persona->posY < l + 32 && persona->posY + 20 > l){
-                    if(persona->posY < l && persona->posY + 20 > l){ // tem o caso de bater em cima "na cabeça do personagem"
-                        persona->posY = l - 19;
+
+                if(persona->posX + 20 > c && persona->posX < c + 32 && persona->posY + 20 > l && persona->posY < l + 32){
+
+                    int chao = (persona->posY + 20) - l;  
+                    int bateuCabeca = (l + 32) - persona->posY;  
+
+                    if(chao < bateuCabeca){
+                        persona->posY = l - 20;  
+                        persona->velocidadeY = 0;
+                        noChao = true;
+                    } else {
+                        persona->posY = l + 32;  
                         persona->velocidadeY = 0;
                     }
-                    if(persona->posX < c  && persona->posX + 20 > c)
-                        persona->posX = c - 19;
-                    if(persona->posX < c + 32 && persona->posX + 20 > c)
-                        persona->posX = persona->posX + 1;
-                    return(true);
                 }
-                    
             }
         }
     }
-    return(false);
+    return noChao;
+}
+
+void colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
+    int iniciox = persona->posX / 32;
+    int fimx    = (persona->posX + 19) / 32;
+    int inicioy = persona->posY / 32;
+    int fimy    = (persona->posY + 19) / 32;
+
+    if(iniciox < 0)       
+        iniciox = 0;
+    if(fimx >= COLUNAS)   
+        fimx = COLUNAS - 1;
+    if(inicioy < 0)       
+        inicioy = 0;
+    if(fimy >= LINHAS)    
+        fimy = LINHAS - 1;
+
+
+    for(int lin = inicioy; lin <= fimy; lin++){
+        for(int col = iniciox; col <= fimx; col++){
+            int tipo = mapa[lin][col];
+            struct tile temp = TILE[tipo];
+            if(!temp.hitboxEMCIMA && !temp.hitboxINTEIRA)
+                continue;
+
+            int c = col * 32;
+            int l = lin * 32;
+
+            if(persona->posX + 20 > c && persona->posX < c + 32 && persona->posY + 20 > l && persona->posY < l + 32){
+                int bateuEsquerda  = (persona->posX + 20) - c;  
+                int bateuDireita = (c + 32) - persona->posX;  
+
+                if(bateuEsquerda < bateuDireita)
+                    persona->posX = c - 20;  
+                else
+                    persona->posX = c + 32; 
+            }
+        }
+    }
 }
 
 void inicializarMapa(int mapa[LINHAS][COLUNAS]) {
