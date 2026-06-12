@@ -11,6 +11,8 @@
 
 #define LINHAS 15
 #define COLUNAS 25
+#define ALTURAPULO -8.0
+#define DECAIMENTOPULO 0.4
 
 struct hitbox{
     int pontoX;
@@ -30,6 +32,11 @@ struct personagem{
     //nome?
 };
 
+struct camera{
+    int posX;
+    int posY;
+};
+
 struct tile{
     int hitboxINTEIRA;
     int hitboxEMCIMA;
@@ -42,15 +49,16 @@ static const struct tile TILE[] = {
     [2] = {1, 0, 1},
 };
 
-void inicializarPersonagem(struct personagem *persona);
-void desenharPersonagem(struct personagem persona, int cameraX);
+
 void moverCima(struct personagem *persona);
 void moverBaixo(struct personagem *persona);
-void moverEsquerda(struct personagem *persona, int *cameraX);
-void moverDireita(struct personagem *persona, int *cameraX);
-bool verificarHitbox(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
+void moverEsquerda(struct personagem *persona);
+void moverDireita(struct personagem *persona);
 void inicializarMapa(int mapa[LINHAS][COLUNAS]);
-void desenharMapa(int mapa[LINHAS][COLUNAS], int *cameraX);
+void inicializarPersonagem(struct personagem *persona);
+void inicializarCamera(struct camera *camera, struct personagem persona);
+void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera);
+void desenharPersonagem(struct personagem persona, struct camera *camera);
 void colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 

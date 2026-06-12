@@ -8,39 +8,33 @@
 #include "inicializar.h"
 #include "entidades.h"
 
-void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_BITMAP *fundo){
-    bool sair = false, redraw = false;
+void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_BITMAP *fundo, struct camera *camera){
+    bool sair = false, redraw = false, noChao = false, agachado = false;
     bool keys[4] = {false, false, false, false};
-    bool noChao = false;
 
-    int cameraX = persona->posX - LARGURA_TELA/2;
-
-    //printf("%d\n", cameraX);
 
     while(!sair){
         ALLEGRO_EVENT ev;
         al_wait_for_event(fila_eventos, &ev);
-        //printf("%d\n", cameraX);
-        //printf("%d\n", persona.posY);
         if(ev.type == ALLEGRO_EVENT_TIMER){
             redraw = true;
+            if(!agachado){
             if(keys[2])
-                moverEsquerda(persona, &cameraX);
-                //mover personagem para esquerda
+                moverEsquerda(persona);
             if(keys[3])
-                moverDireita(persona, &cameraX);
-                //mover personagem para direita
+                moverDireita(persona);
             colisaoHorizontal(persona, mapa);
 
-            persona->velocidadeY += 0.4f;
+            persona->velocidadeY += DECAIMENTOPULO;
             persona->posY += persona->velocidadeY;
             noChao = colisaoVertical(persona, mapa);
             if(keys[0] && noChao)       
-                persona->velocidadeY = -8.0f;
+                persona->velocidadeY = ALTURAPULO;
 
-            cameraX = persona->posX - LARGURA_TELA/2;
-            if(cameraX <= 0)
-                cameraX = 0;
+            camera->posX = persona->posX - LARGURA_TELA/2;
+            if(camera->posX <= 0)
+                camera->posX = 0;
+            }
         }
         else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
             sair = true;
@@ -52,6 +46,7 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
                 
                 case ALLEGRO_KEY_DOWN:
                     keys[1] = true;
+                    agachado = true;
                     break;
 
                 case ALLEGRO_KEY_LEFT:
@@ -73,6 +68,7 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
                 
                 case ALLEGRO_KEY_DOWN:
                     keys[1] = false;
+                    agachado = false;
                     break;
 
                 case ALLEGRO_KEY_LEFT:
@@ -89,9 +85,9 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
         if(redraw && al_event_queue_is_empty(fila_eventos)){
             redraw = false;                         
             al_clear_to_color(al_map_rgb(255, 255, 255)); 
-            //al_draw_bitmap(fundo, 0, 0, 0);
-            desenharMapa(mapa, &cameraX);                      
-            desenharPersonagem(*persona, cameraX);             
+            al_draw_scaled_bitmap(fundo, 0, 0, al_get_bitmap_width(fundo), al_get_bitmap_height(fundo), 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
+            desenharMapa(mapa, camera);                      
+            desenharPersonagem(*persona, camera);             
             al_flip_display();                       
         }
     }
@@ -103,21 +99,23 @@ int main(){
     ALLEGRO_BITMAP *fundo = NULL;
     //ALLEGRO_BITMAP *personagem = NULL;*/
     ALLEGRO_FONT *fonte = NULL;
-    ALLEGRO_TIMER *timer = NULL;//20 15
+    ALLEGRO_TIMER *timer = NULL;
 
     int mapa[LINHAS][COLUNAS];
     inicializarMapa(mapa);
     
-    if(!inicializar(&janela, &fila_eventos, &fonte, &timer, fundo))
+    if(!inicializar(&janela, &fila_eventos, &fonte, &timer, &fundo))
         return (0);
 
     al_start_timer(timer);
 
     struct personagem persona;
     inicializarPersonagem(&persona);
-    
-    //inicializar personagem
-    loop(mapa, &persona, fila_eventos, fundo);
+
+    struct camera camera;
+    inicializarCamera(&camera, persona);
+
+    loop(mapa, &persona, fila_eventos, fundo, &camera);
 
     al_destroy_display(janela);
     al_destroy_event_queue(fila_eventos);

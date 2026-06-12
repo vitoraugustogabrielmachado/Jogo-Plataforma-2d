@@ -16,8 +16,8 @@ void inicializarPersonagem(struct personagem *persona){
     persona->velocidadeY = 0;
 }
 
-void desenharPersonagem(struct personagem persona, int cameraX){
-    al_draw_filled_rectangle(persona.posX - cameraX , persona.posY, persona.posX + 20 - cameraX, persona.posY + 20, al_map_rgb(255, 0, 255));
+void desenharPersonagem(struct personagem persona, struct camera *camera){
+    al_draw_filled_rectangle(persona.posX - camera->posX , persona.posY, persona.posX + 20 - camera->posX, persona.posY + 20, al_map_rgb(255, 0, 255));
 }
 
 void moverCima(struct personagem *persona){
@@ -28,13 +28,13 @@ void moverBaixo(struct personagem *persona){
     persona->posY += persona->velocidade;
 }
 
-void moverEsquerda(struct personagem *persona, int *cameraX){
+void moverEsquerda(struct personagem *persona){
     persona->posX -= persona->velocidade;
     if(persona->posX < 0)
         persona->posX = 0;
 }
 
-void moverDireita(struct personagem *persona, int *cameraX){
+void moverDireita(struct personagem *persona){
     persona->posX += persona->velocidade;
     
 }
@@ -147,15 +147,19 @@ void inicializarMapa(int mapa[LINHAS][COLUNAS]) {
             mapa[lin][col] = temp[lin][col];
 }
 
-void desenharMapa(int mapa[LINHAS][COLUNAS], int *cameraX){
+void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera){
     for(int lin = 0; lin < LINHAS; lin++){
         for(int col = 0; col < COLUNAS; col++){
             int tipo = mapa[lin][col];
-            int telaX = (col * 32) - *cameraX;
+            int telaX = (col * 32) - camera->posX;
             if(tipo != 0 && telaX > -32 && telaX < 680)
                 al_draw_filled_rectangle(telaX, lin * 32, telaX + 32, lin * 32 + 32, al_map_rgb(255, 0, 255));
         }
     }
+}
+
+void inicializarCamera(struct camera *camera, struct personagem persona){
+    camera->posX = persona.posX - LARGURA_TELA/2;
 }
 //desenhar personagem
 //inicializar personagem
