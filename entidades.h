@@ -41,12 +41,27 @@ struct tile{
     int hitboxINTEIRA;
     int hitboxEMCIMA;
     int spriteID;
+    int dano;
+};
+
+struct background{
+    float x;
+    float y;
+    float velx;
+    int dirx;
+    int diry;
+
+    int largura;
+    int altura;
+
+    ALLEGRO_BITMAP *bg;
 };
 
 static const struct tile TILE[] = {
-    [0] = {0, 0, 0},
-    [1] = {0, 1, 1},
-    [2] = {1, 0, 1},
+    [0] = {0, 0, 0, 0},
+    [1] = {0, 1, 1, 0},
+    [2] = {1, 0, 1, 0},
+    [3] = {1, 0, 1, 1}
 };
 
 
@@ -57,9 +72,13 @@ void moverDireita(struct personagem *persona);
 void inicializarMapa(int mapa[LINHAS][COLUNAS]);
 void inicializarPersonagem(struct personagem *persona);
 void inicializarCamera(struct camera *camera, struct personagem persona);
+void inicializarBackground(struct background *bg, float x, float y, float velx, int dirx, int diry, int largura, int altura, ALLEGRO_BITMAP *fundo);
 void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera);
 void desenharPersonagem(struct personagem persona, struct camera *camera);
+void desenharBackground(struct background *bg);
 void colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
+void atualizaBackground(struct background *bg, struct camera *camera);
+
 
 #endif

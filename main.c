@@ -8,7 +8,7 @@
 #include "inicializar.h"
 #include "entidades.h"
 
-void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_BITMAP *fundo, struct camera *camera){
+void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_BITMAP *fundo, struct camera *camera, struct background *bg){
     bool sair = false, redraw = false, noChao = false, agachado = false;
     bool keys[4] = {false, false, false, false};
 
@@ -16,6 +16,7 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
     while(!sair){
         ALLEGRO_EVENT ev;
         al_wait_for_event(fila_eventos, &ev);
+        //printf("%d", persona->vida);
         if(ev.type == ALLEGRO_EVENT_TIMER){
             redraw = true;
             if(!agachado){
@@ -30,7 +31,10 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
             noChao = colisaoVertical(persona, mapa);
             if(keys[0] && noChao)       
                 persona->velocidadeY = ALTURAPULO;
-
+            if(persona->vida == 0){
+                persona->posX = 0; //ver isso
+                persona->posY = ALTURA_TELA - 100;
+            }
             camera->posX = persona->posX - LARGURA_TELA/2;
             if(camera->posX <= 0)
                 camera->posX = 0;
@@ -82,10 +86,11 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
                     sair = true;
                     break;
             }
+        atualizaBackground(bg, camera);
         if(redraw && al_event_queue_is_empty(fila_eventos)){
             redraw = false;                         
             al_clear_to_color(al_map_rgb(255, 255, 255)); 
-            al_draw_scaled_bitmap(fundo, 0, 0, al_get_bitmap_width(fundo), al_get_bitmap_height(fundo), 0, 0, LARGURA_TELA, ALTURA_TELA, 0);
+            desenharBackground(bg);
             desenharMapa(mapa, camera);                      
             desenharPersonagem(*persona, camera);             
             al_flip_display();                       
@@ -115,8 +120,12 @@ int main(){
     struct camera camera;
     inicializarCamera(&camera, persona);
 
-    loop(mapa, &persona, fila_eventos, fundo, &camera);
+    struct background bg;
+    inicializarBackground(&bg, 0, 0, 1, -1, 1, LARGURA_TELA, ALTURA_TELA, fundo);
 
+    loop(mapa, &persona, fila_eventos, fundo, &camera, &bg);
+
+    al_destroy_bitmap(fundo);
     al_destroy_display(janela);
     al_destroy_event_queue(fila_eventos);
  

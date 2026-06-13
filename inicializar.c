@@ -52,7 +52,7 @@ bool inicializar(ALLEGRO_DISPLAY **janela, ALLEGRO_EVENT_QUEUE **fila_eventos, A
   }
  
   al_init_primitives_addon();
-  *fundo = al_load_bitmap("fundo.png");
+  *fundo = al_load_bitmap("fundo4.png");
   if (!*fundo){
     fprintf(stderr, "Falha ao carregar imagem de fundo.\n");
     al_destroy_display(*janela);
