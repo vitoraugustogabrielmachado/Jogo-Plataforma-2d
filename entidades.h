@@ -42,6 +42,7 @@ struct tile{
     int hitboxEMCIMA;
     int spriteID;
     int dano;
+    int interacao;
 };
 
 struct background{
@@ -58,10 +59,11 @@ struct background{
 };
 
 static const struct tile TILE[] = {
-    [0] = {0, 0, 0, 0},
-    [1] = {0, 1, 1, 0},
-    [2] = {1, 0, 1, 0},
-    [3] = {1, 0, 1, 1}
+    [0] = {0, 0, 0, 0, 0}, //nada
+    [1] = {0, 1, 1, 0, 0}, //chao 
+    [2] = {1, 0, 1, 0, 0}, //parede
+    [3] = {1, 0, 1, 1, 0}, //traps
+    [4] = {1, 0, 1, 0, 1}, //escada
 };
 
 
@@ -78,7 +80,7 @@ void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera, ALLEGRO_BITM
 void desenharPersonagem(struct personagem persona, struct camera *camera);
 void desenharInimigo(struct personagem inimigo, struct camera *camera);
 void desenharBackground(struct background *bg);
-void colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
+bool colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 void colisaoInimigo(struct personagem *persona, struct personagem *inimigo);
 void atualizaBackground(struct background *bg, struct camera *camera);

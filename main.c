@@ -9,7 +9,7 @@
 #include "entidades.h"
 
 void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personagem *inimigo, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_BITMAP *fundo, struct camera *camera, struct background *bg){
-    bool sair = false, redraw = false, noChao = false, agachado = false, bateuEsq = false;
+    bool sair = false, redraw = false, noChao = false, agachado = false, bateuEsq = false, interacao = false;
     bool keys[4] = {false, false, false, false};
     ALLEGRO_BITMAP *chao;
     chao = al_load_bitmap("tile_0000.png"); // colocar isso numa funcao
@@ -18,28 +18,41 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
     while(!sair){
         ALLEGRO_EVENT ev;
         al_wait_for_event(fila_eventos, &ev);
-        //printf("%d", persona->vida);
+        //printf("%d\n", persona->posY);
         if(ev.type == ALLEGRO_EVENT_TIMER){
             redraw = true;
             if(!agachado){
-            if(keys[2])
-                moverEsquerda(persona);
-            if(keys[3])
-                moverDireita(persona);
-            colisaoHorizontal(persona, mapa);
-            colisaoInimigo(persona, inimigo);
-            persona->velocidadeY += DECAIMENTOPULO;
-            persona->posY += persona->velocidadeY;
-            noChao = colisaoVertical(persona, mapa);
-            if(keys[0] && noChao)       
-                persona->velocidadeY = ALTURAPULO;
-            if(persona->vida == 0){
-                persona->posX = 0; //ver isso
-                persona->posY = ALTURA_TELA - 100;
-            }
-            camera->posX = persona->posX - LARGURA_TELA/2;
-            if(camera->posX <= 0)
-                camera->posX = 0;
+                if(keys[2])
+                    moverEsquerda(persona);
+                if(keys[3])
+                    moverDireita(persona);
+                interacao = colisaoHorizontal(persona, mapa);
+                //printf("%d", interacao);
+                if(!interacao){
+                    colisaoInimigo(persona, inimigo);
+                
+                    persona->velocidadeY += DECAIMENTOPULO;
+                    persona->posY += persona->velocidadeY;
+                    noChao = colisaoVertical(persona, mapa);
+                    if(keys[0] && noChao)       
+                        persona->velocidadeY = ALTURAPULO;
+                    if(persona->vida == 0){
+                        persona->posX = 0; //ver isso
+                        persona->posY = ALTURA_TELA - 100;
+                    }
+                }
+                else{
+                    if(keys[0]){
+                        persona->posY -= 2;
+                    }
+                    if(keys[1]){
+                        if(persona->posY < (LINHAS - 2.3) * 16)
+                            persona->posY += 2;
+                    }
+                }
+                camera->posX = persona->posX - LARGURA_TELA/2;
+                if(camera->posX <= 0)
+                    camera->posX = 0;
             }
         }
         else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
@@ -52,7 +65,8 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
                 
                 case ALLEGRO_KEY_DOWN:
                     keys[1] = true;
-                    agachado = true;
+                    if(!interacao && noChao)
+                        agachado = true;
                     break;
 
                 case ALLEGRO_KEY_LEFT:
@@ -74,7 +88,8 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
                 
                 case ALLEGRO_KEY_DOWN:
                     keys[1] = false;
-                    agachado = false;
+                    if(!interacao && noChao)
+                        agachado = false;
                     break;
 
                 case ALLEGRO_KEY_LEFT:
