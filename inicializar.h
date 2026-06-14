@@ -5,11 +5,19 @@
 #include <allegro5/allegro_font.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "entidades.h"
 
 #define LARGURA_TELA 640
 #define ALTURA_TELA 480
 #define FPS 60
 
-bool inicializar(ALLEGRO_DISPLAY **janela, ALLEGRO_EVENT_QUEUE **fila_eventos, ALLEGRO_FONT **fonte, ALLEGRO_TIMER **timer, ALLEGRO_BITMAP **fundo);
+bool inicializar(struct allegro *elementos);
+void inicializarMapa(int mapa[LINHAS][COLUNAS]);
+void inicializarPersonagem(struct personagem *persona);
+void inicializarInimigo(struct personagem *inimigo);
+void inicializarCamera(struct camera *camera, struct personagem persona);
+void inicializarBackground(struct background *bg, float x, float y, float velx, int dirx, int diry, int largura, int altura, ALLEGRO_BITMAP *fundo);
+void inicializarElementos(struct allegro *elementos);
+void inicializarDesenhos(struct tipoTiles *desenhos);
 
 #endif

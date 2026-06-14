@@ -13,12 +13,22 @@
 #define COLUNAS 100
 #define ALTURAPULO -8.0
 #define DECAIMENTOPULO 0.4
+#define TAMANHOTILE 16
 
-struct hitbox{
-    int pontoX;
-    int pontoY;
-    int largura;
-    int altura;
+struct allegro{
+    ALLEGRO_DISPLAY *janela;
+    ALLEGRO_EVENT_QUEUE *fila_eventos;
+    ALLEGRO_BITMAP *fundo;
+    ALLEGRO_FONT *fonte;
+    ALLEGRO_TIMER *timer;
+};
+
+struct tipoTiles{
+    ALLEGRO_BITMAP *chao;
+    ALLEGRO_BITMAP *paredeEsq;
+    ALLEGRO_BITMAP *paredeDir;
+    ALLEGRO_BITMAP *escada;
+    ALLEGRO_BITMAP *meioParede;
 };
 
 struct personagem{
@@ -26,7 +36,8 @@ struct personagem{
     int velocidade; // tenho q colocar float
     int posX;
     int posY;
-    struct hitbox hitboxPersonagem;
+    int largura;
+    int altura;
     float velocidadeY;
     //allegro bitmap no futuro
     //nome?
@@ -40,7 +51,6 @@ struct camera{
 struct tile{
     int hitboxINTEIRA;
     int hitboxEMCIMA;
-    int spriteID;
     int dano;
     int interacao;
 };
@@ -59,11 +69,12 @@ struct background{
 };
 
 static const struct tile TILE[] = {
-    [0] = {0, 0, 0, 0, 0}, //nada
-    [1] = {0, 1, 1, 0, 0}, //chao 
-    [2] = {1, 0, 1, 0, 0}, //parede
-    [3] = {1, 0, 1, 1, 0}, //traps
-    [4] = {1, 0, 1, 0, 1}, //escada
+    [0] = {0, 0, 0, 0}, //nada
+    [1] = {0, 1, 0, 0}, //chao 
+    [2] = {1, 0, 0, 0}, //paredeEsq
+    [3] = {1, 0, 0, 0}, //meiodaparede
+    [4] = {1, 0, 0, 0}, //paredeDir
+    [5] = {1, 0, 0, 1}, //escada
 };
 
 
@@ -71,19 +82,17 @@ void moverCima(struct personagem *persona);
 void moverBaixo(struct personagem *persona);
 void moverEsquerda(struct personagem *persona);
 void moverDireita(struct personagem *persona);
-void inicializarMapa(int mapa[LINHAS][COLUNAS]);
-void inicializarPersonagem(struct personagem *persona);
-void inicializarInimigo(struct personagem *inimigo);
-void inicializarCamera(struct camera *camera, struct personagem persona);
-void inicializarBackground(struct background *bg, float x, float y, float velx, int dirx, int diry, int largura, int altura, ALLEGRO_BITMAP *fundo);
-void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera, ALLEGRO_BITMAP *chao);
+
+void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera, struct tipoTiles *desenhos);
 void desenharPersonagem(struct personagem persona, struct camera *camera);
 void desenharInimigo(struct personagem inimigo, struct camera *camera);
 void desenharBackground(struct background *bg);
+
 bool colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 void colisaoInimigo(struct personagem *persona, struct personagem *inimigo);
-void atualizaBackground(struct background *bg, struct camera *camera);
+
+void atualizarBackground(struct background *bg, struct camera *camera);
 void atualizarInimigo(struct personagem *inimigo, bool *bateuEsq);
 
 

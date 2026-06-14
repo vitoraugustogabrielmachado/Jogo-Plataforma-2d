@@ -8,16 +8,16 @@
 #include "inicializar.h"
 #include "entidades.h"
 
-void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personagem *inimigo, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_BITMAP *fundo, struct camera *camera, struct background *bg){
+void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personagem *inimigo, struct allegro elementos, struct camera *camera, struct background *bg){
     bool sair = false, redraw = false, noChao = false, agachado = false, bateuEsq = false, interacao = false;
     bool keys[4] = {false, false, false, false};
-    ALLEGRO_BITMAP *chao;
-    chao = al_load_bitmap("tile_0000.png"); // colocar isso numa funcao
+    struct tipoTiles desenhos;
+    inicializarDesenhos(&desenhos);
 
 
     while(!sair){
         ALLEGRO_EVENT ev;
-        al_wait_for_event(fila_eventos, &ev);
+        al_wait_for_event(elementos.fila_eventos, &ev);
         //printf("%d\n", persona->posY);
         if(ev.type == ALLEGRO_EVENT_TIMER){
             redraw = true;
@@ -26,11 +26,10 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
                     moverEsquerda(persona);
                 if(keys[3])
                     moverDireita(persona);
+                colisaoInimigo(persona, inimigo);
                 interacao = colisaoHorizontal(persona, mapa);
                 //printf("%d", interacao);
                 if(!interacao){
-                    colisaoInimigo(persona, inimigo);
-                
                     persona->velocidadeY += DECAIMENTOPULO;
                     persona->posY += persona->velocidadeY;
                     noChao = colisaoVertical(persona, mapa);
@@ -103,13 +102,13 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
                     sair = true;
                     break;
             }
-        atualizaBackground(bg, camera);
+        atualizarBackground(bg, camera);
         atualizarInimigo(inimigo, &bateuEsq);
-        if(redraw && al_event_queue_is_empty(fila_eventos)){
+        if(redraw && al_event_queue_is_empty(elementos.fila_eventos)){
             redraw = false;                         
             al_clear_to_color(al_map_rgb(255, 255, 255)); 
             desenharBackground(bg);
-            desenharMapa(mapa, camera, chao);                      
+            desenharMapa(mapa, camera, &desenhos);                      
             desenharPersonagem(*persona, camera);   
             desenharInimigo(*inimigo, camera);          
             al_flip_display();                       
@@ -118,18 +117,15 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
 }
 
 int main(){
-    ALLEGRO_DISPLAY *janela = NULL;
-    ALLEGRO_EVENT_QUEUE *fila_eventos = NULL;
-    ALLEGRO_BITMAP *fundo = NULL;
-    //ALLEGRO_BITMAP *personagem = NULL;*/
-    ALLEGRO_FONT *fonte = NULL;
-    ALLEGRO_TIMER *timer = NULL;
+    struct allegro elementos;
+    inicializarElementos(&elementos);
 
     int mapa[LINHAS][COLUNAS];
     inicializarMapa(mapa);
-    if(!inicializar(&janela, &fila_eventos, &fonte, &timer, &fundo))
-        return (0);
-    al_start_timer(timer);
+
+    if(!inicializar(&elementos))
+        return(0);
+    al_start_timer(elementos.timer);
 
     struct personagem persona;
     inicializarPersonagem(&persona);
@@ -137,18 +133,16 @@ int main(){
     struct personagem inimigo;
     inicializarInimigo(&inimigo);
 
-
     struct camera camera;
     inicializarCamera(&camera, persona);
 
     struct background bg;
-    inicializarBackground(&bg, 0, 0, 1, -1, 1, LARGURA_TELA, ALTURA_TELA, fundo);
+    inicializarBackground(&bg, 0, 0, 1, -1, 1, LARGURA_TELA, ALTURA_TELA, elementos.fundo);
+    loop(mapa, &persona, &inimigo, elementos, &camera, &bg);
 
-    loop(mapa, &persona, &inimigo, fila_eventos, fundo, &camera, &bg);
-
-    al_destroy_bitmap(fundo);
-    al_destroy_display(janela);
-    al_destroy_event_queue(fila_eventos);
+    al_destroy_bitmap(elementos.fundo);
+    al_destroy_display(elementos.janela);
+    al_destroy_event_queue(elementos.fila_eventos);
  
     return 1;
 }
