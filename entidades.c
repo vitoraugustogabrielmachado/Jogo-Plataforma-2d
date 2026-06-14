@@ -10,7 +10,7 @@
 
 void inicializarPersonagem(struct personagem *persona){
     persona->velocidade = 5;
-    persona->vida = 30;
+    persona->vida = 3;
     persona->posX = 0; //ver isso
     persona->posY = (LINHAS - 2) * 16 - 20;
     persona->velocidadeY = 0;
@@ -200,7 +200,7 @@ void desenharBackground(struct background *bg){
 }
 
 void inicializarInimigo(struct personagem *inimigo){
-    inimigo->velocidade = 2;
+    inimigo->velocidade = 1;
     inimigo->vida = 0;
     inimigo->posX = 500; //ver isso
     inimigo->posY = (LINHAS - 1) * 16 - 20;
@@ -223,6 +223,30 @@ void atualizarInimigo(struct personagem *inimigo, bool *bateuEsq){
 void desenharInimigo(struct personagem inimigo, struct camera *camera){
     al_draw_filled_rectangle(inimigo.posX - camera->posX , inimigo.posY, inimigo.posX + 20 - camera->posX, inimigo.posY + 20, al_map_rgb(120, 0, 120));
 }
+
+void colisaoInimigo(struct personagem *persona, struct personagem *inimigo){
+    int bateuEsquerda  = (persona->posX + 20) - inimigo->posX;  
+    int bateuDireita = (inimigo->posX + 20) - persona->posX;  
+    int chao = (persona->posY + 20) - inimigo->posY;  
+    int bateuCabeca = (inimigo->posY + 20) - persona->posY;  
+    if(persona->posX + 20 > inimigo->posX && persona->posX < inimigo->posX + 20 && persona->posY + 20 > inimigo->posY && persona->posY < inimigo->posY + 20){
+        if((bateuEsquerda < chao && bateuEsquerda < bateuCabeca) || (bateuDireita < chao && bateuDireita < bateuCabeca)){
+            if(bateuEsquerda < bateuDireita)
+                persona->posX -= 30;  
+            else
+                persona->posX += 30; 
+        }else{
+            if(chao < bateuCabeca){
+                persona->posY -= 30;
+                persona->posX -= 50;   
+            }
+            else
+                persona->posY += 30; 
+        }
+        persona->vida--;
+    }
+}
+  
 //desenhar personagem
 //inicializar personagem
 //mover para cima

@@ -27,7 +27,7 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
             if(keys[3])
                 moverDireita(persona);
             colisaoHorizontal(persona, mapa);
-
+            colisaoInimigo(persona, inimigo);
             persona->velocidadeY += DECAIMENTOPULO;
             persona->posY += persona->velocidadeY;
             noChao = colisaoVertical(persona, mapa);

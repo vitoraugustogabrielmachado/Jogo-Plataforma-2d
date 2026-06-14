@@ -23,7 +23,7 @@ struct hitbox{
 
 struct personagem{
     int vida;
-    int velocidade;
+    int velocidade; // tenho q colocar float
     int posX;
     int posY;
     struct hitbox hitboxPersonagem;
@@ -80,6 +80,7 @@ void desenharInimigo(struct personagem inimigo, struct camera *camera);
 void desenharBackground(struct background *bg);
 void colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
+void colisaoInimigo(struct personagem *persona, struct personagem *inimigo);
 void atualizaBackground(struct background *bg, struct camera *camera);
 void atualizarInimigo(struct personagem *inimigo, bool *bateuEsq);
 
