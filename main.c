@@ -8,9 +8,11 @@
 #include "inicializar.h"
 #include "entidades.h"
 
-void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_BITMAP *fundo, struct camera *camera, struct background *bg){
-    bool sair = false, redraw = false, noChao = false, agachado = false;
+void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personagem *inimigo, ALLEGRO_EVENT_QUEUE *fila_eventos, ALLEGRO_BITMAP *fundo, struct camera *camera, struct background *bg){
+    bool sair = false, redraw = false, noChao = false, agachado = false, bateuEsq = false;
     bool keys[4] = {false, false, false, false};
+    ALLEGRO_BITMAP *chao;
+    chao = al_load_bitmap("tile_0000.png"); // colocar isso numa funcao
 
 
     while(!sair){
@@ -87,12 +89,14 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, ALLEGRO_EVENT_Q
                     break;
             }
         atualizaBackground(bg, camera);
+        atualizarInimigo(inimigo, &bateuEsq);
         if(redraw && al_event_queue_is_empty(fila_eventos)){
             redraw = false;                         
             al_clear_to_color(al_map_rgb(255, 255, 255)); 
             desenharBackground(bg);
-            desenharMapa(mapa, camera);                      
-            desenharPersonagem(*persona, camera);             
+            desenharMapa(mapa, camera, chao);                      
+            desenharPersonagem(*persona, camera);   
+            desenharInimigo(*inimigo, camera);          
             al_flip_display();                       
         }
     }
@@ -108,14 +112,16 @@ int main(){
 
     int mapa[LINHAS][COLUNAS];
     inicializarMapa(mapa);
-    
     if(!inicializar(&janela, &fila_eventos, &fonte, &timer, &fundo))
         return (0);
-
     al_start_timer(timer);
 
     struct personagem persona;
     inicializarPersonagem(&persona);
+
+    struct personagem inimigo;
+    inicializarInimigo(&inimigo);
+
 
     struct camera camera;
     inicializarCamera(&camera, persona);
@@ -123,7 +129,7 @@ int main(){
     struct background bg;
     inicializarBackground(&bg, 0, 0, 1, -1, 1, LARGURA_TELA, ALTURA_TELA, fundo);
 
-    loop(mapa, &persona, fila_eventos, fundo, &camera, &bg);
+    loop(mapa, &persona, &inimigo, fila_eventos, fundo, &camera, &bg);
 
     al_destroy_bitmap(fundo);
     al_destroy_display(janela);

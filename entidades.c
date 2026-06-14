@@ -10,9 +10,9 @@
 
 void inicializarPersonagem(struct personagem *persona){
     persona->velocidade = 5;
-    persona->vida = 3;
+    persona->vida = 30;
     persona->posX = 0; //ver isso
-    persona->posY = ALTURA_TELA - 100;
+    persona->posY = (LINHAS - 2) * 16 - 20;
     persona->velocidadeY = 0;
 }
 
@@ -40,10 +40,10 @@ void moverDireita(struct personagem *persona){
 }
 
 bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
-    int iniciox = persona->posX / 32;
-    int fimx    = (persona->posX + 19) / 32;
-    int inicioy = persona->posY / 32;
-    int fimy    = (persona->posY + 19) / 32;
+    int iniciox = persona->posX / 16;
+    int fimx    = (persona->posX + 19) / 16;
+    int inicioy = persona->posY / 16;
+    int fimy    = (persona->posY + 19) / 16;
 
     if(iniciox < 0)       
         iniciox = 0;
@@ -62,26 +62,31 @@ bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
             struct tile temp = TILE[tipo];
             if(temp.hitboxEMCIMA || temp.hitboxINTEIRA){
 
-                int c = col * 32;
-                int l = lin * 32;
+                int c = col * 16;
+                int l = lin * 16;
+                int chao = (persona->posY + 20) - l;  
+                int bateuCabeca = (l + 16) - persona->posY;   
 
-                if(persona->posX + 20 > c && persona->posX < c + 32 && persona->posY + 20 > l && persona->posY < l + 32){
+                if(persona->posX + 20 > c && persona->posX < c + 16 && persona->posY + 20 > l && persona->posY < l + 16){
 
-                    int chao = (persona->posY + 20) - l;  
-                    int bateuCabeca = (l + 32) - persona->posY;  
 
                     if(chao < bateuCabeca){
                         persona->posY = l - 20;  
                         persona->velocidadeY = 0;
                         noChao = true;
                     } else {
-                        persona->posY = l + 32;  
+                        persona->posY = l + 16;  
                         persona->velocidadeY = 0;
                     }
                     if(temp.dano){
                         persona->vida--;
-                        persona->posX -= 20;
-                    }
+                        if(chao < bateuCabeca){
+                            persona->posY -= 30;  
+                            persona->posX -= 50;
+                        }
+                        else
+                            persona->posY += 30; 
+                }
                 }
             }
         }
@@ -90,10 +95,10 @@ bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
 }
 
 void colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
-    int iniciox = persona->posX / 32;
-    int fimx    = (persona->posX + 19) / 32;
-    int inicioy = persona->posY / 32;
-    int fimy    = (persona->posY + 19) / 32;
+    int iniciox = persona->posX / 16;
+    int fimx    = (persona->posX + 19) / 16;
+    int inicioy = persona->posY / 16;
+    int fimy    = (persona->posY + 19) / 16;
 
     if(iniciox < 0)       
         iniciox = 0;
@@ -110,21 +115,22 @@ void colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
             int tipo = mapa[lin][col];
             struct tile temp = TILE[tipo];
             if(temp.hitboxEMCIMA || temp.hitboxINTEIRA){
-                int c = col * 32;
-                int l = lin * 32;
-
-                if(persona->posX + 20 > c && persona->posX < c + 32 && persona->posY + 20 > l && persona->posY < l + 32){
-                    int bateuEsquerda  = (persona->posX + 20) - c;  
-                    int bateuDireita = (c + 32) - persona->posX;  
-
+                int c = col * 16;
+                int l = lin * 16;
+                int bateuEsquerda  = (persona->posX + 20) - c;  
+                int bateuDireita = (c + 16) - persona->posX;  
+                if(persona->posX + 20 > c && persona->posX < c + 16 && persona->posY + 20 > l && persona->posY < l + 16){
                     if(bateuEsquerda < bateuDireita)
                         persona->posX = c - 20;  
                     else
-                        persona->posX = c + 32; 
+                        persona->posX = c + 16; 
                 }
                 if(temp.dano){
                     persona->vida--;
-                    persona->posX -= 30;
+                    if(bateuEsquerda < bateuDireita)
+                        persona->posX -= 30;  
+                    else
+                        persona->posX += 30; 
                 }
             }
         }
@@ -132,40 +138,31 @@ void colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
 }
 
 void inicializarMapa(int mapa[LINHAS][COLUNAS]) {
-    int temp[LINHAS][COLUNAS] = {
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-        {0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,2},
-        {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    };
+    FILE *f = fopen("mapa.txt", "r");
+    if(!f){
+        printf("Erro ao abrir arquivo\n");
+        return;
+    }
+    char c;
     for (int lin = 0; lin < LINHAS; lin++)
-        for (int col = 0; col < COLUNAS; col++)
-            mapa[lin][col] = temp[lin][col];
+        for (int col = 0; col < COLUNAS; col++){
+            fscanf(f, " %c", &c);
+            mapa[lin][col] = c - '0';
+        }
+    fclose(f);
+            
 }
 
-void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera){
-    ALLEGRO_BITMAP *chao;
-    chao = al_load_bitmap("tile_0000.png"); // colocar isso numa funcao
+void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera, ALLEGRO_BITMAP *chao){
     for(int lin = 0; lin < LINHAS; lin++){
         for(int col = 0; col < COLUNAS; col++){
             int tipo = mapa[lin][col];
-            int telaX = (col * 32) - camera->posX;
-            if(tipo != 0 && telaX < 680){ //  && telax > -32 && 
+            int telaX = (col * 16) - camera->posX;
+            if(tipo != 0 && telaX > -16 && telaX < 680){ //  && telax > -32 && 
                 if(tipo == 1)
-                    al_draw_bitmap(chao, telaX, lin * 32, 0);
+                    al_draw_bitmap(chao, telaX, lin * 16, 0);
                 else
-                    al_draw_filled_rectangle(telaX, lin * 32, telaX + 32, lin * 32 + 32, al_map_rgb(255, 0, 255));
+                    al_draw_filled_rectangle(telaX, lin * 16, telaX + 16, lin * 16 + 16, al_map_rgb(255, 0, 255));
             }
         }
     }
@@ -187,9 +184,12 @@ void inicializarBackground(struct background *bg, float x, float y, float velx, 
 }
 
 void atualizaBackground(struct background *bg, struct camera *camera){
-    bg->x = -camera->posX + bg->dirx;
-    if(bg->x + bg->largura <= 0)
-        bg->x = 0;
+    bg->x = -(camera->posX * 0.5);
+    
+    if(bg->x + bg->largura < 0) // quando ele sai completamente ele reseta 
+        bg->x += bg->largura;
+    if(bg->x > 0)
+        bg->x -= bg->largura;
 }
 
 void desenharBackground(struct background *bg){
@@ -197,8 +197,31 @@ void desenharBackground(struct background *bg){
 
     if(bg->x + bg->largura < LARGURA_TELA)
         al_draw_bitmap(bg->bg, bg->x + bg->largura, bg->y, 0);
-        
+}
 
+void inicializarInimigo(struct personagem *inimigo){
+    inimigo->velocidade = 2;
+    inimigo->vida = 0;
+    inimigo->posX = 500; //ver isso
+    inimigo->posY = (LINHAS - 1) * 16 - 20;
+    inimigo->velocidadeY = 0;
+}
+
+void atualizarInimigo(struct personagem *inimigo, bool *bateuEsq){
+    //preciso definir pontos X limite para ele, quando atingir algum, tem q começar a voltar
+    if(inimigo->posX <= 450){
+        *bateuEsq = true;
+    }else if(inimigo->posX >= 550){
+        *bateuEsq = false; 
+    }
+    if(!*bateuEsq)
+        inimigo->posX -= inimigo->velocidade;
+    else
+        inimigo->posX += inimigo->velocidade;
+}
+
+void desenharInimigo(struct personagem inimigo, struct camera *camera){
+    al_draw_filled_rectangle(inimigo.posX - camera->posX , inimigo.posY, inimigo.posX + 20 - camera->posX, inimigo.posY + 20, al_map_rgb(120, 0, 120));
 }
 //desenhar personagem
 //inicializar personagem
