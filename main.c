@@ -8,10 +8,10 @@
 #include "inicializar.h"
 #include "entidades.h"
 
-void atualizarEstado(bool keys[4], bool noChao, bool agachado, bool interacao, struct personagem *persona){
+void atualizarEstado(bool keys[4], bool noChao, bool interacao, struct personagem *persona){
     if(interacao)
         persona->est = ESCALANDO;
-    else if(agachado)
+    else if(keys[1] && noChao)
         persona->est = AGACHADO;
     else if(!noChao)
         persona->est = PULANDO;
@@ -70,7 +70,7 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
         //printf("%d\n", persona->posY);
         if(ev.type == ALLEGRO_EVENT_TIMER){
             redraw = true;
-            if(!agachado){
+            if(persona->est != AGACHADO){
                 if(keys[2])
                     moverEsquerda(persona);
                 if(keys[3])
@@ -102,7 +102,8 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
                 if(camera->posX <= 0)
                     camera->posX = 0;
             }
-            atualizarEstado(keys, noChao, agachado, interacao, persona);
+            atualizarEstado(keys, noChao, interacao, persona);
+            atualizarPersonagem(persona);
         }
         else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
             sair = true;
@@ -114,8 +115,6 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
                 
                 case ALLEGRO_KEY_DOWN:
                     keys[1] = true;
-                    if(!interacao && noChao)
-                        agachado = true;
                     break;
 
                 case ALLEGRO_KEY_LEFT:
@@ -137,8 +136,6 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
                 
                 case ALLEGRO_KEY_DOWN:
                     keys[1] = false;
-                    if(!interacao && noChao)
-                        agachado = false;
                     break;
 
                 case ALLEGRO_KEY_LEFT:

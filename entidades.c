@@ -106,7 +106,7 @@ bool colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
             int l = lin * TAMANHOTILE;
             if(temp.hitboxEMCIMA || temp.hitboxINTEIRA){
                 int bateuEsquerda  = (persona->posX + persona->largura) - c;  
-                int bateuDireita = (c + TAMANHOTILE) - persona->posX;  
+                int bateuDireita = (c + TAMANHOTILE) - persona->posX;  //o espinho do objeto nn causa dano  CORRIGIR
                 if(persona->posX + persona->largura > c && persona->posX < c + TAMANHOTILE && persona->posY + persona->altura > l && persona->posY < l + TAMANHOTILE){
                     if(temp.interacao)
                         return(true);
@@ -144,8 +144,9 @@ void colisaoInimigo(struct personagem *persona, struct personagem *inimigo){
                 persona->posY -= 30;
                 persona->posX -= 50;   
             }
-            else
+            else{
                 persona->posY += 30; 
+            }
         }
         persona->vida--;
     }
@@ -173,6 +174,9 @@ void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera, struct tipoT
                     case 5:
                         al_draw_bitmap(desenhos->escada, telaX, lin * TAMANHOTILE, 0);
                         break;
+                    case 6:
+                        al_draw_bitmap(desenhos->perigo1, telaX, lin * TAMANHOTILE, 0);
+                        break;
                 }
             }
         }
@@ -186,6 +190,12 @@ void desenharPersonagem(struct personagem persona, struct camera *camera){
             break;
         case AGACHADO:
             al_draw_bitmap(persona.agachar, persona.posX - camera->posX , persona.posY, 0);
+            break;
+        case ANDANDO_DIR:
+            al_draw_bitmap(persona.andar[persona.anim.frameAtual], persona.posX - camera->posX , persona.posY, ALLEGRO_FLIP_HORIZONTAL); //SERIA MELHOR TER UMA DIREÇAO NO PERSONAGEM, PARA SABER PARA ONDE ELE ESTA OLHANDO NO MOMENTO
+            break;
+        case ANDANDO_ESQ:
+            al_draw_bitmap(persona.andar[persona.anim.frameAtual], persona.posX - camera->posX , persona.posY, 0);
             break;
         default:
             al_draw_bitmap(persona.parado, persona.posX - camera->posX , persona.posY, 0);

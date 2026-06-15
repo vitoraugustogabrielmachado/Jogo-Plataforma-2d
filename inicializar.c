@@ -124,15 +124,23 @@ void inicializarMapa(int mapa[LINHAS][COLUNAS]) {
 
 void inicializarPersonagem(struct personagem *persona, struct allegro elementos){
     persona->velocidade = 5;
+    persona->velocidadeY = 0;
+
     persona->vida = 3000;
     persona->posX = 0; //ver isso
     persona->posY = (LINHAS - 2) * 16 - 20;
+
     persona->altura = 32;
     persona->largura = 24;
-    persona->velocidadeY = 0;
+
+    persona->anim.atraso = 3;
+    persona->anim.cont = 0;
+    persona->anim.frameAtual = 0;
+    persona->anim.totalFrames = 2;
 
     persona->parado = al_create_sub_bitmap(elementos.personagem, 0, 0, 24, 32);
-    persona->andar;
+    persona->andar[0] = al_create_sub_bitmap(elementos.personagem, 0, 0, 24, 32);
+    persona->andar[1] = al_create_sub_bitmap(elementos.personagem, 24, 0, 24, 32);
     persona->agachar = al_create_sub_bitmap(elementos.personagem, 96, 0, 24, 32);
     persona->pular;
     persona->escalar;
@@ -152,4 +160,6 @@ void inicializarDesenhos(struct tipoTiles *desenhos){
     desenhos->paredeEsq = al_load_bitmap("sprites/tile_0025.png");
     desenhos->escada = al_load_bitmap("sprites/tile_0071.png");
     desenhos->meioParede = al_load_bitmap("sprites/tile_0104.png");
+    ALLEGRO_BITMAP *sheet = al_load_bitmap("sprites/Trap_Spike.png");
+    desenhos->perigo1 = al_create_sub_bitmap(sheet, 0, 0, 32, 32);
 }

@@ -39,6 +39,7 @@ struct tipoTiles{
     ALLEGRO_BITMAP *paredeDir;
     ALLEGRO_BITMAP *escada;
     ALLEGRO_BITMAP *meioParede;
+    ALLEGRO_BITMAP *perigo1;
 };
 
 struct animacao{
@@ -101,6 +102,7 @@ static const struct tile TILE[] = {
     [3] = {1, 0, 0, 0}, //meiodaparede
     [4] = {1, 0, 0, 0}, //paredeDir
     [5] = {1, 0, 0, 1}, //escada
+    [6] = {1, 0, 1, 0},
 };
 
 
