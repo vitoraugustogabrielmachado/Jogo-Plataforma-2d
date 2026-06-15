@@ -180,7 +180,16 @@ void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera, struct tipoT
 }
 
 void desenharPersonagem(struct personagem persona, struct camera *camera){
-    al_draw_filled_rectangle(persona.posX - camera->posX , persona.posY, persona.posX + persona.largura - camera->posX, persona.posY + persona.altura, al_map_rgb(255, 0, 255));
+    switch(persona.est){
+        case PARADO:
+            al_draw_bitmap(persona.parado, persona.posX - camera->posX , persona.posY, 0);
+            break;
+        case AGACHADO:
+            al_draw_bitmap(persona.agachar, persona.posX - camera->posX , persona.posY, 0);
+            break;
+        default:
+            al_draw_bitmap(persona.parado, persona.posX - camera->posX , persona.posY, 0);
+    }
 }
 
 void desenharBackground(struct background *bg){

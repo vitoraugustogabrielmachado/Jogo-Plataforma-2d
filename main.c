@@ -8,6 +8,55 @@
 #include "inicializar.h"
 #include "entidades.h"
 
+void atualizarEstado(bool keys[4], bool noChao, bool agachado, bool interacao, struct personagem *persona){
+    if(interacao)
+        persona->est = ESCALANDO;
+    else if(agachado)
+        persona->est = AGACHADO;
+    else if(!noChao)
+        persona->est = PULANDO;
+    else if(keys[2])
+        persona->est = ANDANDO_ESQ;
+    else if(keys[3])
+        persona->est = ANDANDO_DIR;
+    else
+        persona->est = PARADO;
+}
+
+void atualizarAnimacao(struct animacao *a){
+    a->cont++;
+    if(a->cont >= a->atraso){
+        a->cont = 0;
+        a->frameAtual++;
+        if(a->frameAtual >= a->totalFrames)
+            a->frameAtual = 0;
+    }
+}
+
+void atualizarPersonagem(struct personagem *persona){
+    switch(persona->est){
+        case PARADO:
+            persona->anim.frameAtual = 0;
+            persona->anim.cont = 0;
+            break;
+        case ANDANDO_ESQ:
+            atualizarAnimacao(&persona->anim);
+            break;
+        case ANDANDO_DIR:
+            atualizarAnimacao(&persona->anim);
+            break;
+        case PULANDO:
+            atualizarAnimacao(&persona->anim);
+            break;
+        case ESCALANDO:
+            atualizarAnimacao(&persona->anim);
+            break;
+        case AGACHADO:
+            persona->anim.frameAtual = 0;
+            break;
+    }
+}
+
 void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personagem *inimigo, struct allegro elementos, struct camera *camera, struct background *bg){
     bool sair = false, redraw = false, noChao = false, agachado = false, bateuEsq = false, interacao = false;
     bool keys[4] = {false, false, false, false};
@@ -53,6 +102,7 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
                 if(camera->posX <= 0)
                     camera->posX = 0;
             }
+            atualizarEstado(keys, noChao, agachado, interacao, persona);
         }
         else if(ev.type == ALLEGRO_EVENT_DISPLAY_CLOSE)
             sair = true;
@@ -104,6 +154,7 @@ void loop(int mapa[LINHAS][COLUNAS], struct personagem *persona, struct personag
             }
         atualizarBackground(bg, camera);
         atualizarInimigo(inimigo, &bateuEsq);
+        
         if(redraw && al_event_queue_is_empty(elementos.fila_eventos)){
             redraw = false;                         
             al_clear_to_color(al_map_rgb(255, 255, 255)); 
@@ -128,7 +179,7 @@ int main(){
     al_start_timer(elementos.timer);
 
     struct personagem persona;
-    inicializarPersonagem(&persona);
+    inicializarPersonagem(&persona, elementos);
 
     struct personagem inimigo;
     inicializarInimigo(&inimigo);

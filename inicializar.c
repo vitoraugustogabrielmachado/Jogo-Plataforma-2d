@@ -59,13 +59,13 @@ bool inicializar(struct allegro *elementos){
       al_destroy_event_queue(elementos->fila_eventos);
       return false;
     }
-    /*personagem = al_load_bitmap("images.jpg");
-    if (!personagem){
+    elementos->personagem = al_load_bitmap("mario.png");
+    if (!elementos->personagem){
       fprintf(stderr, "Falha ao carregar imagem.\n");
-      al_destroy_display(janela);
-      al_destroy_event_queue(fila_eventos);
+      al_destroy_display(elementos->janela);
+      al_destroy_event_queue(elementos->fila_eventos);
       return false;
-    }*/
+    }
   
     al_register_event_source(elementos->fila_eventos, al_get_keyboard_event_source());
     al_register_event_source(elementos->fila_eventos, al_get_display_event_source(elementos->janela));
@@ -122,14 +122,20 @@ void inicializarMapa(int mapa[LINHAS][COLUNAS]) {
             
 }
 
-void inicializarPersonagem(struct personagem *persona){
+void inicializarPersonagem(struct personagem *persona, struct allegro elementos){
     persona->velocidade = 5;
     persona->vida = 3000;
     persona->posX = 0; //ver isso
     persona->posY = (LINHAS - 2) * 16 - 20;
-    persona->altura = 20;
-    persona->largura = 20;
+    persona->altura = 32;
+    persona->largura = 24;
     persona->velocidadeY = 0;
+
+    persona->parado = al_create_sub_bitmap(elementos.personagem, 0, 0, 24, 32);
+    persona->andar;
+    persona->agachar = al_create_sub_bitmap(elementos.personagem, 96, 0, 24, 32);
+    persona->pular;
+    persona->escalar;
 }
 
 void inicializarElementos(struct allegro *elementos){

@@ -15,10 +15,20 @@
 #define DECAIMENTOPULO 0.4
 #define TAMANHOTILE 16
 
+typedef enum{
+    PARADO, 
+    ANDANDO_ESQ, 
+    ANDANDO_DIR, 
+    PULANDO, 
+    AGACHADO, 
+    ESCALANDO
+}estado;
+
 struct allegro{
     ALLEGRO_DISPLAY *janela;
     ALLEGRO_EVENT_QUEUE *fila_eventos;
     ALLEGRO_BITMAP *fundo;
+    ALLEGRO_BITMAP *personagem;
     ALLEGRO_FONT *fonte;
     ALLEGRO_TIMER *timer;
 };
@@ -31,6 +41,13 @@ struct tipoTiles{
     ALLEGRO_BITMAP *meioParede;
 };
 
+struct animacao{
+    int frameAtual;
+    int totalFrames;
+    int cont;
+    int atraso;
+};
+
 struct personagem{
     int vida;
     int velocidade; // tenho q colocar float
@@ -39,6 +56,15 @@ struct personagem{
     int largura;
     int altura;
     float velocidadeY;
+
+    estado est;
+    struct animacao anim;
+
+    ALLEGRO_BITMAP *andar[2];
+    ALLEGRO_BITMAP *pular[2];
+    ALLEGRO_BITMAP *escalar;
+    ALLEGRO_BITMAP *agachar;
+    ALLEGRO_BITMAP *parado;
     //allegro bitmap no futuro
     //nome?
 };
