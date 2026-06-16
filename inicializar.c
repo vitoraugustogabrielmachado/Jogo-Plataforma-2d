@@ -59,8 +59,15 @@ bool inicializar(struct allegro *elementos){
       al_destroy_event_queue(elementos->fila_eventos);
       return false;
     }
-    elementos->personagem = al_load_bitmap("mario.png");
+    elementos->personagem = al_load_bitmap("spriteMario.png");
     if (!elementos->personagem){
+      fprintf(stderr, "Falha ao carregar imagem.\n");
+      al_destroy_display(elementos->janela);
+      al_destroy_event_queue(elementos->fila_eventos);
+      return false;
+    }
+    elementos->inimigo = al_load_bitmap("goomba.png");
+    if (!elementos->inimigo){
       fprintf(stderr, "Falha ao carregar imagem.\n");
       al_destroy_display(elementos->janela);
       al_destroy_event_queue(elementos->fila_eventos);
@@ -81,14 +88,22 @@ bool inicializar(struct allegro *elementos){
     return true;
 }
 
-void inicializarInimigo(struct personagem *inimigo){
+void inicializarInimigo(struct personagem *inimigo, struct allegro elementos){
     inimigo->velocidade = 1;
     inimigo->vida = 0;
     inimigo->posX = 500; //ver isso
-    inimigo->posY = (LINHAS - 1) * 16 - 20;
+    inimigo->posY = (float)((LINHAS - 1) * 16 - 20);
     inimigo->altura = 20;
     inimigo->largura = 20;
     inimigo->velocidadeY = 0;
+
+    inimigo->anim.atraso = 5;
+    inimigo->anim.cont = 0;
+    inimigo->anim.frameAtual = 0;
+    inimigo->anim.totalFrames = 2;
+
+    inimigo->andar[0] = al_create_sub_bitmap(elementos.inimigo, 0, 0, 16, 16);
+    inimigo->andar[1] = al_create_sub_bitmap(elementos.inimigo, 16, 0, 16, 16);
 }
 
 void inicializarCamera(struct camera *camera, struct personagem persona){
@@ -127,23 +142,25 @@ void inicializarPersonagem(struct personagem *persona, struct allegro elementos)
     persona->velocidadeY = 0;
 
     persona->vida = 3000;
-    persona->posX = 0; //ver isso
-    persona->posY = (LINHAS - 2) * 16 - 20;
+    persona->posX = 0.0; //ver isso
+    persona->posY = (float)(LINHAS - 2) * 16;
 
     persona->altura = 32;
     persona->largura = 24;
 
-    persona->anim.atraso = 3;
+    persona->anim.atraso = 5;
     persona->anim.cont = 0;
     persona->anim.frameAtual = 0;
     persona->anim.totalFrames = 2;
+    persona->direcao = 1;
 
     persona->parado = al_create_sub_bitmap(elementos.personagem, 0, 0, 24, 32);
     persona->andar[0] = al_create_sub_bitmap(elementos.personagem, 0, 0, 24, 32);
     persona->andar[1] = al_create_sub_bitmap(elementos.personagem, 24, 0, 24, 32);
     persona->agachar = al_create_sub_bitmap(elementos.personagem, 96, 0, 24, 32);
-    persona->pular;
-    persona->escalar;
+    persona->pular = al_create_sub_bitmap(elementos.personagem, 72, 0, 24, 32);
+    persona->escalar[0] = al_create_sub_bitmap(elementos.personagem, 144, 0, 24, 32);
+    persona->escalar[1] = al_create_sub_bitmap(elementos.personagem, 144, 0, 24, 32);
 }
 
 void inicializarElementos(struct allegro *elementos){

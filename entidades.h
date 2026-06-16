@@ -29,6 +29,7 @@ struct allegro{
     ALLEGRO_EVENT_QUEUE *fila_eventos;
     ALLEGRO_BITMAP *fundo;
     ALLEGRO_BITMAP *personagem;
+    ALLEGRO_BITMAP *inimigo;
     ALLEGRO_FONT *fonte;
     ALLEGRO_TIMER *timer;
 };
@@ -52,18 +53,19 @@ struct animacao{
 struct personagem{
     int vida;
     int velocidade; // tenho q colocar float
-    int posX;
-    int posY;
+    float posX;
+    float posY;
     int largura;
     int altura;
     float velocidadeY;
 
     estado est;
     struct animacao anim;
+    int direcao;
 
     ALLEGRO_BITMAP *andar[2];
-    ALLEGRO_BITMAP *pular[2];
-    ALLEGRO_BITMAP *escalar;
+    ALLEGRO_BITMAP *pular;
+    ALLEGRO_BITMAP *escalar[2];
     ALLEGRO_BITMAP *agachar;
     ALLEGRO_BITMAP *parado;
     //allegro bitmap no futuro
@@ -117,7 +119,7 @@ void desenharInimigo(struct personagem inimigo, struct camera *camera);
 void desenharBackground(struct background *bg);
 
 bool colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
-bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
+void colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 void colisaoInimigo(struct personagem *persona, struct personagem *inimigo);
 
 void atualizarBackground(struct background *bg, struct camera *camera);

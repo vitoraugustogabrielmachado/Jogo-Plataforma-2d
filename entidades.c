@@ -24,25 +24,18 @@ void moverEsquerda(struct personagem *persona){
 
 void moverDireita(struct personagem *persona){
     persona->posX += persona->velocidade;
-    
 }
 
-bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
-    int iniciox = persona->posX / TAMANHOTILE;
-    int fimx    = (persona->posX + persona->largura - 1) / TAMANHOTILE;
-    int inicioy = persona->posY / TAMANHOTILE;
-    int fimy    = (persona->posY + persona->altura - 1) / TAMANHOTILE;
+void colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
+    int iniciox = (int)persona->posX / TAMANHOTILE;
+    int fimx    = ((int)persona->posX + persona->largura - 1) / TAMANHOTILE;
+    int inicioy = (int)persona->posY / TAMANHOTILE;
+    int fimy    = ((int)persona->posY + persona->altura - 1) / TAMANHOTILE;
 
-    if(iniciox < 0)       
-        iniciox = 0;
-    if(fimx >= COLUNAS)   
-        fimx = COLUNAS - 1;
-    if(inicioy < 0)       
-        inicioy = 0;
-    if(fimy >= LINHAS)    
-        fimy = LINHAS - 1;
-
-    bool noChao = false;
+    if(iniciox < 0)       iniciox = 0;
+    if(fimx >= COLUNAS)   fimx = COLUNAS - 1;
+    if(inicioy < 0)       inicioy = 0;
+    if(fimy >= LINHAS)    fimy = LINHAS - 1;
 
     for(int lin = inicioy; lin <= fimy; lin++){
         for(int col = iniciox; col <= fimx; col++){
@@ -50,102 +43,98 @@ bool colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
             struct tile temp = TILE[tipo];
             if(temp.hitboxEMCIMA || temp.hitboxINTEIRA){
 
-                int c = col * TAMANHOTILE;
-                int l = lin * TAMANHOTILE;
-                int chao = (persona->posY + persona->altura) - l;  
-                int bateuCabeca = (l + TAMANHOTILE) - persona->posY;   
+                float c = (float)(col * TAMANHOTILE);
+                float l = (float)(lin * TAMANHOTILE);
+                float chao      = (persona->posY + (float)persona->altura) - l;
+                float bateuCabeca = (l + (float)TAMANHOTILE) - persona->posY;
 
-                if(persona->posX + persona->largura > c && persona->posX < c + TAMANHOTILE && persona->posY + persona->altura > l && persona->posY < l + TAMANHOTILE){
-
+                if(persona->posX + (float)persona->largura > c && persona->posX < c + (float)TAMANHOTILE && persona->posY + (float)persona->altura >= l && persona->posY < l + (float)TAMANHOTILE){
 
                     if(chao < bateuCabeca){
-                        persona->posY = l - persona->altura;  
+                        persona->posY = l - (float)persona->altura;
                         persona->velocidadeY = 0;
-                        noChao = true;
                     } else {
-                        persona->posY = l + TAMANHOTILE;  
+                        persona->posY = l + (float)TAMANHOTILE;
                         persona->velocidadeY = 0;
                     }
                     if(temp.dano){
                         persona->vida--;
                         if(chao < bateuCabeca){
-                            persona->posY -= 30;  
-                            persona->posX -= 50;
+                            persona->posY -= 30.0;
+                            persona->posX -= 50.0;
+                        } else {
+                            persona->posY += 30.0;
                         }
-                        else
-                            persona->posY += 30; 
-                }
+                    }
                 }
             }
         }
     }
-    return noChao;
 }
 
 bool colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]) {
-    int iniciox = persona->posX / TAMANHOTILE;
-    int fimx    = (persona->posX + persona->largura - 1) / TAMANHOTILE;
-    int inicioy = persona->posY / TAMANHOTILE;
-    int fimy    = (persona->posY + persona->altura - 1) / TAMANHOTILE;
+    int iniciox = (int)persona->posX / TAMANHOTILE;
+    int fimx    = ((int)persona->posX + persona->largura - 1) / TAMANHOTILE;
+    int inicioy = (int)persona->posY / TAMANHOTILE;
+    int fimy    = ((int)persona->posY + persona->altura - 1) / TAMANHOTILE;
 
-    if(iniciox < 0)       
-        iniciox = 0;
-    if(fimx >= COLUNAS)   
-        fimx = COLUNAS - 1;
-    if(inicioy < 0)       
-        inicioy = 0;
-    if(fimy >= LINHAS)    
-        fimy = LINHAS - 1;
-    //bool interacao;
+    if(iniciox < 0)       iniciox = 0;
+    if(fimx >= COLUNAS)   fimx = COLUNAS - 1;
+    if(inicioy < 0)       inicioy = 0;
+    if(fimy >= LINHAS)    fimy = LINHAS - 1;
 
     for(int lin = inicioy; lin <= fimy; lin++){
         for(int col = iniciox; col <= fimx; col++){
             int tipo = mapa[lin][col];
             struct tile temp = TILE[tipo];
-            int c = col * TAMANHOTILE;
-            int l = lin * TAMANHOTILE;
+            float c = (float)(col * TAMANHOTILE);
+            float l = (float)(lin * TAMANHOTILE);
+
             if(temp.hitboxEMCIMA || temp.hitboxINTEIRA){
-                int bateuEsquerda  = (persona->posX + persona->largura) - c;  
-                int bateuDireita = (c + TAMANHOTILE) - persona->posX;  //o espinho do objeto nn causa dano  CORRIGIR
-                if(persona->posX + persona->largura > c && persona->posX < c + TAMANHOTILE && persona->posY + persona->altura > l && persona->posY < l + TAMANHOTILE){
+                float bateuEsquerda = (persona->posX + (float)persona->largura) - c;
+                float bateuDireita  = (c + (float)TAMANHOTILE) - persona->posX;
+
+                if(persona->posX + (float)persona->largura > c &&persona->posX < c + (float)TAMANHOTILE && persona->posY + (float)persona->altura > l && persona->posY < l + (float)TAMANHOTILE){
+
                     if(temp.interacao)
-                        return(true);
+                        return true;
                     if(bateuEsquerda < bateuDireita)
-                        persona->posX = c - persona->largura;  
+                        persona->posX = c - (float)persona->largura;
                     else
-                        persona->posX = c + TAMANHOTILE; 
+                        persona->posX = c + (float)TAMANHOTILE;
                 }
                 if(temp.dano){
                     persona->vida--;
                     if(bateuEsquerda < bateuDireita)
-                        persona->posX -= 30;  
+                        persona->posX -= 30.0;
                     else
-                        persona->posX += 30; 
+                        persona->posX += 30.0;
                 }
             }
         }
     }
-    return(false);
+    return false;
 }
-void colisaoInimigo(struct personagem *persona, struct personagem *inimigo){
-    int bateuEsquerda  = (persona->posX + persona->largura) - inimigo->posX;  
-    int bateuDireita = (inimigo->posX + inimigo->largura) - persona->posX;  
-    int chao = (persona->posY + persona->altura) - inimigo->posY;  
-    int bateuCabeca = (inimigo->posY + inimigo->altura) - persona->posY;  
 
-    if(persona->posX + persona->largura > inimigo->posX && persona->posX < inimigo->posX + inimigo->largura && persona->posY + persona->altura > inimigo->posY && persona->posY < inimigo->posY + inimigo->altura){
-        if((bateuEsquerda < chao && bateuEsquerda < bateuCabeca) || (bateuDireita < chao && bateuDireita < bateuCabeca)){
+void colisaoInimigo(struct personagem *persona, struct personagem *inimigo){
+    float bateuEsquerda = (persona->posX + (float)persona->largura) - (float)inimigo->posX;
+    float bateuDireita  = ((float)inimigo->posX + (float)inimigo->largura) - persona->posX;
+    float chao          = (persona->posY + (float)persona->altura) - (float)inimigo->posY;
+    float bateuCabeca   = ((float)inimigo->posY + (float)inimigo->altura) - persona->posY;
+
+    if(persona->posX + (float)persona->largura > (float)inimigo->posX && persona->posX < (float)inimigo->posX + (float)inimigo->largura && persona->posY + (float)persona->altura > (float)inimigo->posY && persona->posY < (float)inimigo->posY + (float)inimigo->altura){
+
+        if((bateuEsquerda < chao && bateuEsquerda < bateuCabeca) || (bateuDireita  < chao && bateuDireita  < bateuCabeca)){
             if(bateuEsquerda < bateuDireita)
-                persona->posX -= 30;  
+                persona->posX -= 30.0;
             else
-                persona->posX += 30; 
-        }else{
+                persona->posX += 30.0;
+        } else {
             if(chao < bateuCabeca){
-                persona->posY -= 30;
-                persona->posX -= 50;   
-            }
-            else{
-                persona->posY += 30; 
+                persona->posY -= 30.0;
+                persona->posX -= 50.0;
+            } else {
+                persona->posY += 30.0;
             }
         }
         persona->vida--;
@@ -156,26 +145,26 @@ void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera, struct tipoT
     for(int lin = 0; lin < LINHAS; lin++){
         for(int col = 0; col < COLUNAS; col++){
             int tipo = mapa[lin][col];
-            int telaX = (col * TAMANHOTILE) - camera->posX;
-            if(tipo != 0 && telaX > -TAMANHOTILE && telaX < 680){ //  && telax > -32 && 
+            float telaX = (float)(col * TAMANHOTILE) - camera->posX;
+            if(tipo != 0 && telaX > -(float)TAMANHOTILE && telaX < 680.0f){
                 switch(tipo){
                     case 1:
-                        al_draw_bitmap(desenhos->chao, telaX, lin * TAMANHOTILE, 0);
+                        al_draw_bitmap(desenhos->chao, telaX, (float)(lin * TAMANHOTILE), 0);
                         break;
                     case 2:
-                        al_draw_bitmap(desenhos->paredeEsq, telaX, lin * TAMANHOTILE, 0);
+                        al_draw_bitmap(desenhos->paredeEsq, telaX, (float)(lin * TAMANHOTILE), 0);
                         break;
                     case 3:
-                        al_draw_bitmap(desenhos->meioParede, telaX, lin * TAMANHOTILE, 0);
+                        al_draw_bitmap(desenhos->meioParede, telaX, (float)(lin * TAMANHOTILE), 0);
                         break;
                     case 4:
-                        al_draw_bitmap(desenhos->paredeDir, telaX, lin * TAMANHOTILE, 0);
+                        al_draw_bitmap(desenhos->paredeDir, telaX, (float)(lin * TAMANHOTILE), 0);
                         break;
                     case 5:
-                        al_draw_bitmap(desenhos->escada, telaX, lin * TAMANHOTILE, 0);
+                        al_draw_bitmap(desenhos->escada, telaX, (float)(lin * TAMANHOTILE), 0);
                         break;
                     case 6:
-                        al_draw_bitmap(desenhos->perigo1, telaX, lin * TAMANHOTILE, 0);
+                        al_draw_bitmap(desenhos->perigo1, telaX, (float)(lin * TAMANHOTILE), 0);
                         break;
                 }
             }
@@ -184,60 +173,49 @@ void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera, struct tipoT
 }
 
 void desenharPersonagem(struct personagem persona, struct camera *camera){
+    int flag = persona.direcao ? ALLEGRO_FLIP_HORIZONTAL : 0;
+    int flagEscalando = (persona.anim.frameAtual == 1) ? ALLEGRO_FLIP_HORIZONTAL : 0;
+    float telaX = persona.posX - camera->posX;
+    float telaY = persona.posY;
+    
     switch(persona.est){
-        case PARADO:
-            al_draw_bitmap(persona.parado, persona.posX - camera->posX , persona.posY, 0);
-            break;
-        case AGACHADO:
-            al_draw_bitmap(persona.agachar, persona.posX - camera->posX , persona.posY, 0);
-            break;
-        case ANDANDO_DIR:
-            al_draw_bitmap(persona.andar[persona.anim.frameAtual], persona.posX - camera->posX , persona.posY, ALLEGRO_FLIP_HORIZONTAL); //SERIA MELHOR TER UMA DIREÇAO NO PERSONAGEM, PARA SABER PARA ONDE ELE ESTA OLHANDO NO MOMENTO
-            break;
-        case ANDANDO_ESQ:
-            al_draw_bitmap(persona.andar[persona.anim.frameAtual], persona.posX - camera->posX , persona.posY, 0);
-            break;
-        default:
-            al_draw_bitmap(persona.parado, persona.posX - camera->posX , persona.posY, 0);
+        case PARADO: al_draw_bitmap(persona.parado, telaX, telaY, flag); break;
+        case AGACHADO: al_draw_bitmap(persona.agachar, telaX, telaY, flag); break;
+        case ANDANDO_DIR: al_draw_bitmap(persona.andar[persona.anim.frameAtual], telaX, telaY, flag); break;
+        case ANDANDO_ESQ: al_draw_bitmap(persona.andar[persona.anim.frameAtual], telaX, telaY, flag); break;
+        case ESCALANDO: al_draw_bitmap(persona.escalar[persona.anim.frameAtual], telaX, telaY, flagEscalando); break;
+        case PULANDO: al_draw_bitmap(persona.pular, telaX, telaY, flag); break;
     }
 }
 
 void desenharBackground(struct background *bg){
-    al_draw_bitmap(bg->bg, bg->x, bg->y, 0);
-
+    al_draw_bitmap(bg->bg, (float)bg->x, (float)bg->y, 0);
     if(bg->x + bg->largura < LARGURA_TELA)
-        al_draw_bitmap(bg->bg, bg->x + bg->largura, bg->y, 0);
+        al_draw_bitmap(bg->bg, (float)(bg->x + bg->largura), (float)bg->y, 0);
 }
 
 void desenharInimigo(struct personagem inimigo, struct camera *camera){
-    al_draw_filled_rectangle(inimigo.posX - camera->posX , inimigo.posY, inimigo.posX + inimigo.largura - camera->posX, inimigo.posY + inimigo.altura, al_map_rgb(120, 0, 120));
+    //al_draw_filled_rectangle(inimigo.posX - camera->posX, inimigo.posY, inimigo.posX + (float)inimigo.largura - camera->posX, inimigo.posY + (float)inimigo.altura, al_map_rgb(120, 0, 120));
+
+    al_draw_bitmap(inimigo.andar[inimigo.anim.frameAtual], inimigo.posX - camera->posX, inimigo.posY, 0);
 }
 
 void atualizarBackground(struct background *bg, struct camera *camera){
-    bg->x = -(camera->posX * 0.5);
-    
-    if(bg->x + bg->largura < 0) // quando ele sai completamente ele reseta 
+    bg->x = (int)(-(camera->posX * 0.5));
+    if(bg->x + bg->largura < 0)
         bg->x += bg->largura;
     if(bg->x > 0)
         bg->x -= bg->largura;
 }
 
 void atualizarInimigo(struct personagem *inimigo, bool *bateuEsq){
-    //preciso definir pontos X limite para ele, quando atingir algum, tem q começar a voltar
-    if(inimigo->posX <= 450){
+    if(inimigo->posX <= 450.0)
         *bateuEsq = true;
-    }else if(inimigo->posX >= 550){
-        *bateuEsq = false; 
-    }
+    else if(inimigo->posX >= 550.0)
+        *bateuEsq = false;
+
     if(!*bateuEsq)
         inimigo->posX -= inimigo->velocidade;
     else
         inimigo->posX += inimigo->velocidade;
 }
-  
-//desenhar personagem
-//inicializar personagem
-//mover para cima
-//mover para baixo
-//mover para os lados
-//o mover para baixo no futuro vai ser inutil, mas por ora para testar a movimentaçao deixa ai

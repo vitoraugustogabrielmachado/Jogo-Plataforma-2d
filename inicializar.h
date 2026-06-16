@@ -14,7 +14,7 @@
 bool inicializar(struct allegro *elementos);
 void inicializarMapa(int mapa[LINHAS][COLUNAS]);
 void inicializarPersonagem(struct personagem *persona, struct allegro elementos);
-void inicializarInimigo(struct personagem *inimigo);
+void inicializarInimigo(struct personagem *inimigo, struct allegro elementos);
 void inicializarCamera(struct camera *camera, struct personagem persona);
 void inicializarBackground(struct background *bg, float x, float y, float velx, int dirx, int diry, int largura, int altura, ALLEGRO_BITMAP *fundo);
 void inicializarElementos(struct allegro *elementos);
