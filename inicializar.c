@@ -37,7 +37,7 @@ bool inicializar(struct allegro *elementos){
     al_set_window_title(elementos->janela, "Utilizando o Teclado");
   
     al_init_font_addon();
-    elementos->fonte = al_load_font("comic.ttf", 72, 0);
+    elementos->fonte = al_load_font("comic.ttf", 30, 0);
     if (!elementos->fonte){
       fprintf(stderr, "Falha ao carregar \"fonte comic.ttf\".\n");
       al_destroy_display(elementos->janela);
@@ -127,12 +127,9 @@ void inicializarMapa(int mapa[LINHAS][COLUNAS]) {
         printf("Erro ao abrir arquivo\n");
         return;
     }
-    char c;
     for (int lin = 0; lin < LINHAS; lin++)
-        for (int col = 0; col < COLUNAS; col++){
-            fscanf(f, " %c", &c);
-            mapa[lin][col] = c - '0';
-        }
+        for (int col = 0; col < COLUNAS; col++)
+            fscanf(f, "%d", &mapa[lin][col]);
     fclose(f);
             
 }
@@ -141,7 +138,7 @@ void inicializarPersonagem(struct personagem *persona, struct allegro elementos)
     persona->velocidade = 5;
     persona->velocidadeY = 0;
 
-    persona->vida = 3000;
+    persona->vida = 3;
     persona->posX = 0.0; //ver isso
     persona->posY = (float)(LINHAS - 2) * 16;
 
@@ -177,6 +174,32 @@ void inicializarDesenhos(struct tipoTiles *desenhos){
     desenhos->paredeEsq = al_load_bitmap("sprites/tile_0025.png");
     desenhos->escada = al_load_bitmap("sprites/tile_0071.png");
     desenhos->meioParede = al_load_bitmap("sprites/tile_0104.png");
-    ALLEGRO_BITMAP *sheet = al_load_bitmap("sprites/Trap_Spike.png");
-    desenhos->perigo1 = al_create_sub_bitmap(sheet, 0, 0, 32, 32);
+    desenhos->sheetPerigo1 = al_load_bitmap("sprites/Trap_Spike.png");
+    desenhos->sheetPerigo2 = al_load_bitmap("sprites/spikeeeee.png");
+    desenhos->sheetPerigo3 = al_load_bitmap("sprites/SpikeBall.png");
+    desenhos->sheetPerigo4 = al_load_bitmap("sprites/Fire.png");
+    desenhos->sheetPerigo5 = al_load_bitmap("sprites/Fan.png");
+
+    if(desenhos->sheetPerigo1)
+      desenhos->perigo1 = al_create_sub_bitmap(desenhos->sheetPerigo1, 0, 0, 32, 32);
+    else
+      desenhos->perigo1 = al_create_bitmap(32, 32);
+
+    if(desenhos->sheetPerigo2)
+      desenhos->perigo2 = al_create_sub_bitmap(desenhos->sheetPerigo2, 130, 0, 30, 32);
+    else
+      desenhos->perigo2 = al_create_bitmap(30, 32);
+
+    if(desenhos->sheetPerigo3)
+      desenhos->perigo3 = al_create_sub_bitmap(desenhos->sheetPerigo3, 0, 0, 21, 21);
+    else
+      desenhos->perigo3 = al_create_bitmap(21, 21);
+    if(desenhos->sheetPerigo4)
+      desenhos->perigo4 = al_create_sub_bitmap(desenhos->sheetPerigo4, 0, 0, 16, 16);
+    else
+      desenhos->perigo4 = al_create_bitmap(16, 16);
+    if(desenhos->sheetPerigo5)
+      desenhos->perigo5 = al_create_sub_bitmap(desenhos->sheetPerigo5, 0, 0, 32, 16);
+    else
+      desenhos->perigo5 = al_create_bitmap(32, 16);
 }

@@ -15,6 +15,14 @@
 #define DECAIMENTOPULO 0.4
 #define TAMANHOTILE 16
 
+typedef enum {
+    MENU,
+    JOGANDO,
+    MORTE,
+    VITORIA,
+    SAIR
+} estadoJogo;
+
 typedef enum{
     PARADO, 
     ANDANDO_ESQ, 
@@ -41,6 +49,15 @@ struct tipoTiles{
     ALLEGRO_BITMAP *escada;
     ALLEGRO_BITMAP *meioParede;
     ALLEGRO_BITMAP *perigo1;
+    ALLEGRO_BITMAP *perigo2;
+    ALLEGRO_BITMAP *perigo3;
+    ALLEGRO_BITMAP *perigo4;
+    ALLEGRO_BITMAP *perigo5;
+    ALLEGRO_BITMAP *sheetPerigo1;  
+    ALLEGRO_BITMAP *sheetPerigo2;  
+    ALLEGRO_BITMAP *sheetPerigo3;  
+    ALLEGRO_BITMAP *sheetPerigo4;  
+    ALLEGRO_BITMAP *sheetPerigo5;  
 };
 
 struct animacao{
@@ -105,6 +122,10 @@ static const struct tile TILE[] = {
     [4] = {1, 0, 0, 0}, //paredeDir
     [5] = {1, 0, 0, 1}, //escada
     [6] = {1, 0, 1, 0},
+    [7] = {1, 0, 1, 0},
+    [8] = {1, 0, 1, 0},
+    [9] = {1, 0, 1, 0},
+    [10] = {1, 0, 1, 0},
 };
 
 

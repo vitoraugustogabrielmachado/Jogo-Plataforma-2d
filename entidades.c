@@ -148,24 +148,16 @@ void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera, struct tipoT
             float telaX = (float)(col * TAMANHOTILE) - camera->posX;
             if(tipo != 0 && telaX > -(float)TAMANHOTILE && telaX < 680.0f){
                 switch(tipo){
-                    case 1:
-                        al_draw_bitmap(desenhos->chao, telaX, (float)(lin * TAMANHOTILE), 0);
-                        break;
-                    case 2:
-                        al_draw_bitmap(desenhos->paredeEsq, telaX, (float)(lin * TAMANHOTILE), 0);
-                        break;
-                    case 3:
-                        al_draw_bitmap(desenhos->meioParede, telaX, (float)(lin * TAMANHOTILE), 0);
-                        break;
-                    case 4:
-                        al_draw_bitmap(desenhos->paredeDir, telaX, (float)(lin * TAMANHOTILE), 0);
-                        break;
-                    case 5:
-                        al_draw_bitmap(desenhos->escada, telaX, (float)(lin * TAMANHOTILE), 0);
-                        break;
-                    case 6:
-                        al_draw_bitmap(desenhos->perigo1, telaX, (float)(lin * TAMANHOTILE), 0);
-                        break;
+                    case 1: al_draw_bitmap(desenhos->chao, telaX, (float)(lin * TAMANHOTILE), 0); break;
+                    case 2: al_draw_bitmap(desenhos->paredeEsq, telaX, (float)(lin * TAMANHOTILE), 0); break;
+                    case 3: al_draw_bitmap(desenhos->meioParede, telaX, (float)(lin * TAMANHOTILE), 0); break;
+                    case 4: al_draw_bitmap(desenhos->paredeDir, telaX, (float)(lin * TAMANHOTILE), 0); break;
+                    case 5: al_draw_bitmap(desenhos->escada, telaX, (float)(lin * TAMANHOTILE), 0); break;
+                    case 6: al_draw_bitmap(desenhos->perigo1, telaX, (float)(lin * TAMANHOTILE), 0); break;
+                    case 7: al_draw_bitmap(desenhos->perigo2, telaX, (float)(lin * TAMANHOTILE), 0); break;
+                    case 8: al_draw_bitmap(desenhos->perigo3, telaX, (float)(lin * TAMANHOTILE), 0); break;
+                    case 9: al_draw_bitmap(desenhos->perigo4, telaX, (float)(lin * TAMANHOTILE), 0); break;
+                    case 10: al_draw_bitmap(desenhos->perigo5, telaX, (float)(lin * TAMANHOTILE), 0); break;
                 }
             }
         }
@@ -195,8 +187,6 @@ void desenharBackground(struct background *bg){
 }
 
 void desenharInimigo(struct personagem inimigo, struct camera *camera){
-    //al_draw_filled_rectangle(inimigo.posX - camera->posX, inimigo.posY, inimigo.posX + (float)inimigo.largura - camera->posX, inimigo.posY + (float)inimigo.altura, al_map_rgb(120, 0, 120));
-
     al_draw_bitmap(inimigo.andar[inimigo.anim.frameAtual], inimigo.posX - camera->posX, inimigo.posY, 0);
 }
 
