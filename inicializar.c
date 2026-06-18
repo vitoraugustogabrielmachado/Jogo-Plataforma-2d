@@ -5,7 +5,9 @@
 #include <allegro5/allegro_primitives.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include "entidades.h"
 #include "inicializar.h"
+#include "estadoJogo.h"
 
 bool inicializar(struct allegro *elementos){
     if (!al_init()){
@@ -34,7 +36,7 @@ bool inicializar(struct allegro *elementos){
       return false;
     }
   
-    al_set_window_title(elementos->janela, "Utilizando o Teclado");
+    al_set_window_title(elementos->janela, "Jogo do Ano");
   
     al_init_font_addon();
     elementos->fonte = al_load_font("comic.ttf", 30, 0);
@@ -52,21 +54,21 @@ bool inicializar(struct allegro *elementos){
     }
   
     al_init_primitives_addon();
-    elementos->fundo = al_load_bitmap("fundo4.png");
+    elementos->fundo = al_load_bitmap("sprites/fundo4.png");
     if (!elementos->fundo){
       fprintf(stderr, "Falha ao carregar imagem de fundo.\n");
       al_destroy_display(elementos->janela);
       al_destroy_event_queue(elementos->fila_eventos);
       return false;
     }
-    elementos->personagem = al_load_bitmap("spriteMario.png");
+    elementos->personagem = al_load_bitmap("sprites/spriteMario.png");
     if (!elementos->personagem){
       fprintf(stderr, "Falha ao carregar imagem.\n");
       al_destroy_display(elementos->janela);
       al_destroy_event_queue(elementos->fila_eventos);
       return false;
     }
-    elementos->inimigo = al_load_bitmap("goomba.png");
+    elementos->inimigo = al_load_bitmap("sprites/goomba.png");
     if (!elementos->inimigo){
       fprintf(stderr, "Falha ao carregar imagem.\n");
       al_destroy_display(elementos->janela);
@@ -202,4 +204,28 @@ void inicializarDesenhos(struct tipoTiles *desenhos){
       desenhos->perigo5 = al_create_sub_bitmap(desenhos->sheetPerigo5, 0, 0, 32, 16);
     else
       desenhos->perigo5 = al_create_bitmap(32, 16);
+}
+
+void destruirJogo(struct personagem *persona, struct personagem *inimigo, struct allegro *elementos, struct tipoTiles *desenhos){
+    for(int i = 0; i < persona->anim.totalFrames; i++)
+        al_destroy_bitmap(persona->andar[i]);
+    for(int i = 0; i < persona->anim.totalFrames; i++)
+        al_destroy_bitmap(persona->escalar[i]);
+    al_destroy_bitmap(persona->parado);
+    al_destroy_bitmap(persona->pular);
+    al_destroy_bitmap(persona->agachar);
+
+    al_destroy_bitmap(desenhos->perigo1);
+
+    for(int i = 0; i < inimigo->anim.totalFrames; i++)
+        al_destroy_bitmap(inimigo->andar[i]);
+
+    al_destroy_bitmap(elementos->personagem);
+    al_destroy_bitmap(elementos->inimigo);
+    al_destroy_bitmap(elementos->fundo); 
+
+    al_destroy_font(elementos->fonte);
+    al_destroy_timer(elementos->timer);
+    al_destroy_event_queue(elementos->fila_eventos);
+    al_destroy_display(elementos->janela);
 }

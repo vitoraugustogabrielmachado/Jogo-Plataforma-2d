@@ -141,6 +141,29 @@ void colisaoInimigo(struct personagem *persona, struct personagem *inimigo){
     }
 }
 
+bool estaNoChao(struct personagem *persona, int mapa[LINHAS][COLUNAS]){
+    int inicioX = (int)persona->posX / TAMANHOTILE;
+    int fimX = ((int)persona->posX + persona->largura - 1) / TAMANHOTILE;
+    int lin    = ((int)persona->posY + persona->altura) / TAMANHOTILE;
+
+    if(lin >= LINHAS) 
+        return(false);
+    if(lin < 0)       
+        return(false);
+
+    if(inicioX < 0)      
+        inicioX = 0;
+    if(fimX >= COLUNAS) 
+        fimX = COLUNAS - 1;
+
+    for(int col = inicioX; col <= fimX; col++){
+        struct tile temp = TILE[mapa[lin][col]];
+        if(temp.hitboxEMCIMA || temp.hitboxINTEIRA)
+            return true;
+    }
+    return(false);
+}
+
 void desenharMapa(int mapa[LINHAS][COLUNAS], struct camera *camera, struct tipoTiles *desenhos){
     for(int lin = 0; lin < LINHAS; lin++){
         for(int col = 0; col < COLUNAS; col++){

@@ -20,8 +20,9 @@ typedef enum {
     JOGANDO,
     MORTE,
     VITORIA,
-    SAIR
-} estadoJogo;
+    SAIR, 
+    PAUSAR,
+}estadoJogo;
 
 typedef enum{
     PARADO, 
@@ -69,7 +70,7 @@ struct animacao{
 
 struct personagem{
     int vida;
-    int velocidade; // tenho q colocar float
+    int velocidade; 
     float posX;
     float posY;
     int largura;
@@ -85,8 +86,6 @@ struct personagem{
     ALLEGRO_BITMAP *escalar[2];
     ALLEGRO_BITMAP *agachar;
     ALLEGRO_BITMAP *parado;
-    //allegro bitmap no futuro
-    //nome?
 };
 
 struct camera{
@@ -142,6 +141,7 @@ void desenharBackground(struct background *bg);
 bool colisaoHorizontal(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 void colisaoVertical(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 void colisaoInimigo(struct personagem *persona, struct personagem *inimigo);
+bool estaNoChao(struct personagem *persona, int mapa[LINHAS][COLUNAS]);
 
 void atualizarBackground(struct background *bg, struct camera *camera);
 void atualizarInimigo(struct personagem *inimigo, bool *bateuEsq);
