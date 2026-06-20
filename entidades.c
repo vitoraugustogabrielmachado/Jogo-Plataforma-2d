@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include "entidades.h"
 #include "inicializar.h"
-
+//move o personagem para cima
 void moverCima(struct personagem *persona){
     persona->posY -= 4 * persona->velocidade;
 }
